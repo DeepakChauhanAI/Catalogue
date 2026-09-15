@@ -54,6 +54,19 @@ export function demo() {
     }
   }
 
+  // 5. No password may appear in any rendered free-text field (shared mode
+  //    renders name/env/status/url — a password there defeats the redaction)
+  for (const p of products) {
+    const passes = p.deployments.map(d => d.pass).filter(Boolean);
+    for (const d of p.deployments) {
+      for (const field of [d.name, d.env, d.status, d.url]) {
+        if (field && passes.some(pass => field.includes(pass))) {
+          failures.push(`${p.id}: password leaks into rendered field "${field}"`);
+        }
+      }
+    }
+  }
+
   if (failures.length) {
     console.error('FAIL\n  ' + failures.join('\n  '));
     process.exitCode = 1;

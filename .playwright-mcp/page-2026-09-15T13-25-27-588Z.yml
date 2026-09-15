@@ -1,0 +1,154 @@
+- generic [ref=f3e3]:
+  - complementary "Product navigation" [ref=f3e4]:
+    - generic [ref=f3e17]:
+      - generic [ref=f3e18]: Demo Hub
+      - generic [ref=f3e19]: Solution launchpad
+    - button "PRESENTER — creds visible" [ref=f3e20] [cursor=pointer]
+    - textbox "Search solutions… (Ctrl+K)" [ref=f3e32]:
+      - /placeholder: Search solutions…  (Ctrl+K)
+    - group "Domain filter" [ref=f3e33]:
+      - button "All (4)" [ref=f3e34] [cursor=pointer]
+      - button "HealthCare (2)" [ref=f3e35] [cursor=pointer]
+      - button "InfoSec (2)" [ref=f3e37] [cursor=pointer]
+    - generic [ref=f3e39]:
+      - button "All" [ref=f3e40] [cursor=pointer]
+      - button "AI" [ref=f3e41] [cursor=pointer]
+      - button "Clinical Workflow" [ref=f3e42] [cursor=pointer]
+      - button "Realtime" [ref=f3e43] [cursor=pointer]
+      - button "Queue Ops" [ref=f3e44] [cursor=pointer]
+      - button "Security" [ref=f3e45] [cursor=pointer]
+      - button "PCI DSS" [ref=f3e46] [cursor=pointer]
+      - button "Discovery" [ref=f3e47] [cursor=pointer]
+      - button "Post-Quantum" [ref=f3e48] [cursor=pointer]
+    - navigation "Products" [ref=f3e49]:
+      - generic [ref=f3e50]:
+        - generic [ref=f3e51]: HealthCare
+        - link "1 DermaDesk AI" [ref=f3e52] [cursor=pointer]:
+          - /url: "#/dermadesk"
+          - generic [ref=f3e53]: "1"
+          - generic [ref=f3e54]: DermaDesk AI
+        - link "2 OPD Intelligence" [ref=f3e55] [cursor=pointer]:
+          - /url: "#/opd"
+          - generic [ref=f3e56]: "2"
+          - generic [ref=f3e57]: OPD Intelligence
+      - generic [ref=f3e58]:
+        - generic [ref=f3e59]: InfoSec
+        - link "3 Central CC Scanner" [ref=f3e60] [cursor=pointer]:
+          - /url: "#/cc_scanner"
+          - generic [ref=f3e61]: "3"
+          - generic [ref=f3e62]: Central CC Scanner
+        - link "4 Panacea PQC Scanner" [ref=f3e63] [cursor=pointer]:
+          - /url: "#/pqc_scanner"
+          - generic [ref=f3e64]: "4"
+          - generic [ref=f3e65]: Panacea PQC Scanner
+    - generic [ref=f3e66]:
+      - generic [ref=f3e67]: 1–4 jump to product
+      - generic [ref=f3e68]: Esc back to overview
+      - generic [ref=f3e69]: Ctrl+K search
+    - button "Dark mode" [ref=f3e70] [cursor=pointer]
+  - main [ref=f3e74]:
+    - generic [ref=f3e75]:
+      - generic [ref=f3e76]:
+        - generic [ref=f3e77]:
+          - heading "OPD Intelligence" [level=1] [ref=f3e78]
+          - generic [ref=f3e79]: Queue & Intake Platform
+        - paragraph [ref=f3e80]: Hospital outpatient queue, kiosk intake, voice assistant, and doctor console as one system
+      - link "← All solutions (Esc)" [ref=f3e81] [cursor=pointer]:
+        - /url: "#/"
+    - generic [ref=f3e82]:
+      - generic [ref=f3e83]: Launch — 4 environments
+      - generic [ref=f3e84]:
+        - generic [ref=f3e85]:
+          - generic [ref=f3e86]:
+            - generic [ref=f3e87]: Web App — Doctor Console
+            - generic [ref=f3e88]: Vite :5173 · Doctor console — login required
+            - generic [ref=f3e89]: http://localhost:5173
+          - link "Open" [ref=f3e91] [cursor=pointer]:
+            - /url: http://localhost:5173
+        - generic [ref=f3e96]:
+          - generic [ref=f3e97]:
+            - generic [ref=f3e98]: Kiosk & Voice Intake
+            - generic [ref=f3e99]: Vite :5173 · Kiosk + Dhara voice screens — login required
+            - generic [ref=f3e100]: http://localhost:5173
+          - link "Open" [ref=f3e102] [cursor=pointer]:
+            - /url: http://localhost:5173
+        - generic [ref=f3e107]:
+          - generic [ref=f3e108]:
+            - generic [ref=f3e109]: FastAPI Interactive Docs
+            - generic [ref=f3e110]: API :8000 · Swagger, no login
+            - generic [ref=f3e111]: http://localhost:8000/docs
+          - link "Open" [ref=f3e113] [cursor=pointer]:
+            - /url: http://localhost:8000/docs
+        - generic [ref=f3e118]:
+          - generic [ref=f3e119]:
+            - generic [ref=f3e120]: Waiting-Room TV Display
+            - generic [ref=f3e121]: Public route · No login — for lobby screens
+            - generic [ref=f3e122]: http://localhost:5173/waiting-room
+          - link "Open" [ref=f3e124] [cursor=pointer]:
+            - /url: http://localhost:5173/waiting-room
+      - generic [ref=f3e129]: dr.rao / doctor123 · kiosk | dhara / kiosk123 | dhara123
+    - generic [ref=f3e130]:
+      - generic [ref=f3e131]:
+        - generic [ref=f3e132]:
+          - generic [ref=f3e133]: Offline fallback
+          - generic [ref=f3e134]: Runs entirely in-browser — use when the client network blocks the real deployment.
+        - button "Hide simulator" [active] [ref=f3e157] [cursor=pointer]
+      - generic [ref=f3e159]:
+        - generic [ref=f3e160]:
+          - generic [ref=f3e161]:
+            - generic [ref=f3e162]: Total Clinic Queue
+            - generic [ref=f3e163]: 148 Patients
+          - generic [ref=f3e164]:
+            - generic [ref=f3e165]: Average Dwell Time
+            - generic [ref=f3e166]: 48 mins
+          - generic [ref=f3e167]:
+            - generic [ref=f3e168]: Queue Status
+            - generic [ref=f3e169]: Surge Congestion
+        - generic [ref=f3e170]:
+          - generic [ref=f3e171]:
+            - generic [ref=f3e172]: Live Outpatient Rooms & Consultation Velocities
+            - generic [ref=f3e173]: TimescaleDB Live Sync
+          - generic [ref=f3e174]:
+            - generic [ref=f3e175]:
+              - generic [ref=f3e176]:
+                - generic [ref=f3e177]: Dr. Ramanathan
+                - generic [ref=f3e178]: 24 Waiting
+              - generic [ref=f3e179]: Dermatology Room 1
+              - generic [ref=f3e180]: Delayed (+26m)
+            - generic [ref=f3e183]:
+              - generic [ref=f3e184]:
+                - generic [ref=f3e185]: Dr. Ananya Sharma
+                - generic [ref=f3e186]: 11 Waiting
+              - generic [ref=f3e187]: ENT Room 3
+              - generic [ref=f3e188]: On Schedule
+            - generic [ref=f3e191]:
+              - generic [ref=f3e192]:
+                - generic [ref=f3e193]: Dr. Vikram Patel
+                - generic [ref=f3e194]: 9 Waiting
+              - generic [ref=f3e195]: Cardiology Room 2
+              - generic [ref=f3e196]: Ahead (+8m)
+            - generic [ref=f3e199]:
+              - generic [ref=f3e200]:
+                - generic [ref=f3e201]: Dr. Priya Shah
+                - generic [ref=f3e202]: 3 Waiting
+              - generic [ref=f3e203]: Fast-Track / Standby Room 5
+              - generic [ref=f3e204]: Standby Ready
+        - generic [ref=f3e207]:
+          - button "Simulate Morning Walk-in Surge" [ref=f3e208] [cursor=pointer]
+          - button "Trigger Dynamic Rebalance (-40% Wait)" [ref=f3e215] [cursor=pointer]
+          - button "Broadcast SMS/WhatsApp Tokens" [ref=f3e219] [cursor=pointer]
+    - generic [ref=f3e138]:
+      - generic [ref=f3e139]: Talk track — presenter only
+      - paragraph [ref=f3e144]: "\"Register a patient at the kiosk, watch the token appear on the doctor rail, call the patient and hear the bilingual TV chime. Then hand the mic to Dhara — the Gemini voice intake extracts a 7-point clinical checklist while you watch. Land on the prescription writer with voice dictation.\""
+    - tablist [ref=f3e145]:
+      - tab "Overview" [selected] [ref=f3e146] [cursor=pointer]
+      - tab "Tech Specs" [ref=f3e147] [cursor=pointer]
+      - tab "Features (6)" [ref=f3e148] [cursor=pointer]
+      - tab "Roadmap" [ref=f3e149] [cursor=pointer]
+    - generic [ref=f3e150]:
+      - generic [ref=f3e151]:
+        - generic [ref=f3e152]: Summary
+        - paragraph [ref=f3e153]: An outpatient platform unifying a self-service touch kiosk, a Gemini Live conversational voice intake assistant (Dhara), a doctor console with an EMR prescription writer, and public waiting-room TV displays — all fed by one deadlock-free token engine on SQLite WAL.
+      - generic [ref=f3e154]:
+        - generic [ref=f3e155]: Built for
+        - paragraph [ref=f3e156]: Hospital COOs, medical superintendents, clinic chains

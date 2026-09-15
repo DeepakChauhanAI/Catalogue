@@ -84,7 +84,7 @@ export default function DetailPane({ product, mode, onUnlock, showToast }) {
                 {dep.url && <div className="t-xs font-mono" style={{ color: 'var(--color-brand)', marginTop: '0.15rem' }}>{dep.url}</div>}
               </div>
               <div className="actions">
-                {dep.user && dep.pass && isShared && (
+                {product.deployments[idx].user && product.deployments[idx].pass && isShared && (
                   <button onClick={() => handleCopy(idx)} className="btn-secondary" style={{ fontSize: '0.8rem', padding: '0.4rem 0.7rem' }}>
                     {copiedIdx === idx ? <Check size={13} color="var(--color-health)" /> : <Copy size={13} />}
                     {copiedIdx === idx ? 'Copied' : 'Copy creds'}

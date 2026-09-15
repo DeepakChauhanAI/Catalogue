@@ -52,8 +52,8 @@ export const CATALOG_DATA = {
     tags: ['AI', 'Clinical Workflow', 'Queue Ops'],
     talkTrack: 'Register a patient at the kiosk, watch the token appear on the doctor rail, call the patient and hear the bilingual TV chime. Then hand the mic to Dhara — the Gemini voice intake extracts a 7-point clinical checklist while you watch. Land on the prescription writer with voice dictation.',
     deployments: [
-      { name: 'Web App — Doctor Console', env: 'Vite :5173', url: 'http://localhost:5173', status: 'Login: dr.rao / doctor123', color: 'emerald', user: 'dr.rao', pass: 'doctor123' },
-      { name: 'Kiosk & Voice Intake', env: 'Vite :5173', url: 'http://localhost:5173', status: 'Login: kiosk / kiosk123 (voice: dhara / dhara123)', color: 'cyan', user: 'kiosk | dhara', pass: 'kiosk123 | dhara123' },
+      { name: 'Web App — Doctor Console', env: 'Vite :5173', url: 'http://localhost:5173', status: 'Doctor console — login required', color: 'emerald', user: 'dr.rao', pass: 'doctor123' },
+      { name: 'Kiosk & Voice Intake', env: 'Vite :5173', url: 'http://localhost:5173', status: 'Kiosk + Dhara voice screens — login required', color: 'cyan', user: 'kiosk | dhara', pass: 'kiosk123 | dhara123' },
       { name: 'FastAPI Interactive Docs', env: 'API :8000', url: 'http://localhost:8000/docs', status: 'Swagger, no login', color: 'purple' },
       { name: 'Waiting-Room TV Display', env: 'Public route', url: 'http://localhost:5173/waiting-room', status: 'No login — for lobby screens', color: 'amber' }
     ],

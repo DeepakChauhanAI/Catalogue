@@ -1,0 +1,98 @@
+- generic [ref=f2e3]:
+  - complementary "Product navigation" [ref=f2e4]:
+    - generic [ref=f2e17]:
+      - generic [ref=f2e18]: Demo Hub
+      - generic [ref=f2e19]: Solution launchpad
+    - button "SHARED — client safe" [ref=f2e20] [cursor=pointer]
+    - textbox "Search solutions… (Ctrl+K)" [ref=f2e32]:
+      - /placeholder: Search solutions…  (Ctrl+K)
+    - group "Domain filter" [ref=f2e33]:
+      - button "All (4)" [ref=f2e34] [cursor=pointer]
+      - button "HealthCare (2)" [ref=f2e35] [cursor=pointer]
+      - button "InfoSec (2)" [ref=f2e37] [cursor=pointer]
+    - generic [ref=f2e39]:
+      - button "All" [ref=f2e40] [cursor=pointer]
+      - button "AI" [ref=f2e41] [cursor=pointer]
+      - button "Clinical Workflow" [ref=f2e42] [cursor=pointer]
+      - button "Realtime" [ref=f2e43] [cursor=pointer]
+      - button "Queue Ops" [ref=f2e44] [cursor=pointer]
+      - button "Security" [ref=f2e45] [cursor=pointer]
+      - button "PCI DSS" [ref=f2e46] [cursor=pointer]
+      - button "Discovery" [ref=f2e47] [cursor=pointer]
+      - button "Post-Quantum" [ref=f2e48] [cursor=pointer]
+    - navigation "Products" [ref=f2e49]:
+      - generic [ref=f2e50]:
+        - generic [ref=f2e51]: HealthCare
+        - link "1 DermaDesk AI" [ref=f2e52] [cursor=pointer]:
+          - /url: "#/dermadesk"
+          - generic [ref=f2e53]: "1"
+          - generic [ref=f2e54]: DermaDesk AI
+        - link "2 OPD Intelligence" [ref=f2e55] [cursor=pointer]:
+          - /url: "#/opd"
+          - generic [ref=f2e56]: "2"
+          - generic [ref=f2e57]: OPD Intelligence
+      - generic [ref=f2e58]:
+        - generic [ref=f2e59]: InfoSec
+        - link "3 Central CC Scanner" [ref=f2e60] [cursor=pointer]:
+          - /url: "#/cc_scanner"
+          - generic [ref=f2e61]: "3"
+          - generic [ref=f2e62]: Central CC Scanner
+        - link "4 Panacea PQC Scanner" [ref=f2e63] [cursor=pointer]:
+          - /url: "#/pqc_scanner"
+          - generic [ref=f2e64]: "4"
+          - generic [ref=f2e65]: Panacea PQC Scanner
+    - generic [ref=f2e66]:
+      - generic [ref=f2e67]: 1–4 jump to product
+      - generic [ref=f2e68]: Esc back to overview
+      - generic [ref=f2e69]: Ctrl+K search
+    - button "Dark mode" [ref=f2e70] [cursor=pointer]
+  - main [ref=f2e223]:
+    - heading "Solution Portfolio" [level=1] [ref=f2e224]
+    - paragraph [ref=f2e225]: Launchpad for client demonstrations. Every deployment, credential, and feature below is verified against the actual product repositories.
+    - generic [ref=f2e226]:
+      - generic [ref=f2e227]:
+        - heading "HealthCare" [level=2] [ref=f2e228]
+        - generic [ref=f2e229]: 2 solutions
+      - paragraph [ref=f2e230]: Clinical intake, AI differentials, and hospital queue operations — verified against the running codebases.
+      - generic [ref=f2e231]:
+        - link "Doctor-First Clinical DermaDesk AI Doctor-first dermatology intake, QR photo capture, and AI differentials with physician sign-off Next.js 16 + NestJS 11" [ref=f2e232] [cursor=pointer]:
+          - /url: "#/dermadesk"
+          - generic [ref=f2e233]: Doctor-First Clinical
+          - heading "DermaDesk AI" [level=3] [ref=f2e237]
+          - generic [ref=f2e238]: Doctor-first dermatology intake, QR photo capture, and AI differentials with physician sign-off
+          - generic [ref=f2e239]: Next.js 16 + NestJS 11
+        - link "Queue & Intake Platform OPD Intelligence Hospital outpatient queue, kiosk intake, voice assistant, and doctor console as one system FastAPI + React 19" [ref=f2e240] [cursor=pointer]:
+          - /url: "#/opd"
+          - generic [ref=f2e241]: Queue & Intake Platform
+          - heading "OPD Intelligence" [level=3] [ref=f2e245]
+          - generic [ref=f2e246]: Hospital outpatient queue, kiosk intake, voice assistant, and doctor console as one system
+          - generic [ref=f2e247]: FastAPI + React 19
+    - generic [ref=f2e248]:
+      - generic [ref=f2e249]:
+        - heading "InfoSec" [level=2] [ref=f2e250]
+        - generic [ref=f2e251]: 2 solutions
+      - paragraph [ref=f2e252]: Agentless PAN discovery and post-quantum cryptographic risk — verified against the running codebases.
+      - generic [ref=f2e253]:
+        - link "Agentless PAN Discovery Central CC Scanner Agentless cardholder-data discovery and masking — the in-house ControlCase CDD replacement Presidio + spaCy" [ref=f2e254] [cursor=pointer]:
+          - /url: "#/cc_scanner"
+          - generic [ref=f2e255]: Agentless PAN Discovery
+          - heading "Central CC Scanner" [level=3] [ref=f2e259]
+          - generic [ref=f2e260]: Agentless cardholder-data discovery and masking — the in-house ControlCase CDD replacement
+          - generic [ref=f2e261]: Presidio + spaCy
+        - link "Post-Quantum CBOM Panacea PQC Scanner AWS cryptographic discovery, NIST taxonomy classification, and Mosca risk scoring with CycloneDX CBOM export v1.0.0a0" [ref=f2e262] [cursor=pointer]:
+          - /url: "#/pqc_scanner"
+          - generic [ref=f2e263]: Post-Quantum CBOM
+          - heading "Panacea PQC Scanner" [level=3] [ref=f2e267]
+          - generic [ref=f2e268]: AWS cryptographic discovery, NIST taxonomy classification, and Mosca risk scoring with CycloneDX CBOM export
+          - generic [ref=f2e269]: v1.0.0a0
+  - generic [ref=f2e271]:
+    - generic [ref=f2e272]:
+      - generic [ref=f2e278]:
+        - heading "Enter Presenter Mode" [level=3] [ref=f2e279]
+        - generic [ref=f2e280]: Credentials become visible on screen
+      - button [ref=f2e281] [cursor=pointer]
+    - generic [ref=f2e285]: Presenter passphrase
+    - textbox "Presenter passphrase" [active] [ref=f2e286]
+    - generic [ref=f2e287]:
+      - button "Stay shared" [ref=f2e288] [cursor=pointer]
+      - button "Unlock" [ref=f2e289] [cursor=pointer]
