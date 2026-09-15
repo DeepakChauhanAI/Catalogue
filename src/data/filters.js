@@ -62,4 +62,12 @@ export function demo() {
   }
 }
 
-if (import.meta.url === `file://${process.argv[1]}`.replace(/\\/g, '/')) demo();
+// Browser-safe main-module guard: in Node, compare against the argv path as a
+// real URL (handles drive letters, spaces, percent-encoding); in the browser
+// bundle `process` doesn't exist and the typeof check short-circuits.
+const invokedDirectly =
+  typeof process !== 'undefined' &&
+  process.argv[1] &&
+  import.meta.url === new URL('file:///' + process.argv[1].replace(/\\/g, '/')).href;
+
+if (invokedDirectly) demo();
