@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, LogOut } from 'lucide-react';
+import { ShieldCheck, LogOut, ArrowLeft } from 'lucide-react';
 import BrandLogo from './BrandLogo';
 
 export default function Navbar({
@@ -58,9 +58,28 @@ export default function Navbar({
             </button>
           </>
         ) : (
-          <span className="badge badge-health" style={{ fontSize: '0.74rem', padding: '0.25rem 0.6rem' }}>
-            Client Showcase
-          </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+            <span className="badge badge-health" style={{ fontSize: '0.74rem', padding: '0.25rem 0.6rem' }}>
+              Client Showcase
+            </span>
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={onGoToLanding}
+              style={{
+                fontSize: '0.78rem',
+                padding: '0.32rem 0.75rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+                cursor: 'pointer'
+              }}
+              title="Return to the Gateway & Landing Page"
+            >
+              <ArrowLeft size={13} />
+              <span>Back to Gateway</span>
+            </button>
+          </div>
         )}
       </div>
     </header>
