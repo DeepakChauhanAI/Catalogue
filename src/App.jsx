@@ -1,47 +1,140 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
-import Sidebar from './components/Sidebar';
-import OverviewPane from './components/OverviewPane';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import Navbar from './components/common/Navbar';
+import LandingPage from './components/landing/LandingPage';
+import AuthModal from './components/common/AuthModal';
+import DemoView from './components/demo/DemoView';
+import AdminView from './components/admin/AdminView';
+import DemoVideoModal from './components/demo/DemoVideoModal';
+import CompleteFlowModal from './components/demo/CompleteFlowModal';
+import ContactDemoModal from './components/demo/ContactDemoModal';
 import DetailPane from './components/DetailPane';
-import AuthModal from './components/AuthModal';
 import Toast from './components/Toast';
-import { CATALOG_DATA } from './data/catalogData';
-import { filterProducts } from './data/filters';
-
-const PRODUCTS = Object.values(CATALOG_DATA);
-const idFromHash = () => decodeURIComponent(window.location.hash.slice(2)) || null;
+import { getProjects, saveProject, deleteProject } from './data/storageService';
 
 export default function App() {
-  const [domain, setDomain] = useState('all');
-  const [tag, setTag] = useState('All');
-  const [query, setQuery] = useState('');
-  const [selectedId, setSelectedId] = useState(idFromHash);
-  const [mode, setMode] = useState(() => localStorage.getItem('catalogue-mode') || 'shared');
-  const [theme, setTheme] = useState(() =>
-    localStorage.getItem('catalogue-theme') ||
-    (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'));
-  const [authOpen, setAuthOpen] = useState(false);
+  const [currentView, setCurrentView] = useState(() => localStorage.getItem('catalogue_view') || 'landing');
+  const [authRole, setAuthRole] = useState(() => localStorage.getItem('catalogue_role') || 'client');
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [persona, setPersona] = useState(() => localStorage.getItem('catalogue_persona') || 'demo');
+  const [projects, setProjects] = useState(getProjects);
   const [toast, setToast] = useState('');
+
+  // Modal targets: project id | null
+  const [videoModal, setVideoModal] = useState(null);
+  const [flowModal, setFlowModal] = useState(null);
+  const [contactModal, setContactModal] = useState(null);
+  const [detailId, setDetailId] = useState(null);
+  const [returnToAdmin, setReturnToAdmin] = useState(false);
+
   const searchRef = useRef(null);
   const toastTimer = useRef(null);
 
-  const showToast = (msg) => {
+  const showToast = useCallback((msg) => {
     setToast(msg);
     clearTimeout(toastTimer.current);
     toastTimer.current = setTimeout(() => setToast(''), 2800);
-  };
-
-  useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-    localStorage.setItem('catalogue-theme', theme);
-  }, [theme]);
-
-  useEffect(() => { localStorage.setItem('catalogue-mode', mode); }, [mode]);
-
-  useEffect(() => {
-    const onHash = () => setSelectedId(idFromHash());
-    window.addEventListener('hashchange', onHash);
-    return () => window.removeEventListener('hashchange', onHash);
   }, []);
+
+  useEffect(() => { localStorage.setItem('catalogue_persona', persona); }, [persona]);
+  useEffect(() => { localStorage.setItem('catalogue_view', currentView); }, [currentView]);
+  useEffect(() => { localStorage.setItem('catalogue_role', authRole); }, [authRole]);
+
+  const handleEnterClient = useCallback(() => {
+    setAuthRole('client');
+    setPersona('demo');
+    setCurrentView('app');
+    setDetailId(null);
+    showToast('Entered Client Demo Showcase');
+  }, [showToast]);
+
+  const handleEnterAdmin = useCallback(() => {
+    if (authRole === 'admin') {
+      setPersona('admin');
+      setCurrentView('app');
+      setDetailId(null);
+      showToast('Entered Portfolio Admin Console');
+    } else {
+      setAuthModalOpen(true);
+    }
+  }, [authRole, showToast]);
+
+  const handleAdminAuthSuccess = useCallback((userProfile) => {
+    setAuthRole('admin');
+    setPersona('admin');
+    setCurrentView('app');
+    setAuthModalOpen(false);
+    setDetailId(null);
+    showToast('Authenticated as Portfolio Administrator');
+  }, [showToast]);
+
+  const handleGoToLanding = useCallback(() => {
+    setCurrentView('landing');
+    setDetailId(null);
+    setVideoModal(null);
+    setFlowModal(null);
+    setContactModal(null);
+    setReturnToAdmin(false);
+  }, []);
+
+  const handleSignOut = useCallback(() => {
+    setAuthRole('client');
+    setPersona('demo');
+    setCurrentView('landing');
+    setDetailId(null);
+    setVideoModal(null);
+    setFlowModal(null);
+    setContactModal(null);
+    setReturnToAdmin(false);
+    showToast('Signed out. Returned to Gateway.');
+  }, [showToast]);
+
+  const handleBackFromDetail = useCallback(() => {
+    setDetailId(null);
+    if (returnToAdmin && authRole === 'admin') {
+      setPersona('admin');
+      setReturnToAdmin(false);
+      showToast('Returned to Admin Workspace');
+    }
+  }, [returnToAdmin, authRole, showToast]);
+
+  const switchPersona = useCallback(() => {
+    setVideoModal(null); setFlowModal(null); setContactModal(null); setDetailId(null);
+    setReturnToAdmin(false);
+
+    if (authRole !== 'admin') {
+      return;
+    }
+
+    setPersona(p => {
+      const next = p === 'demo' ? 'admin' : 'demo';
+      showToast(next === 'admin' ? 'Switched to Admin Console' : 'Switched to Client View Preview');
+      return next;
+    });
+  }, [authRole, showToast]);
+
+  const handleSaveProject = useCallback((project, isNew = false) => {
+    saveProject(project);
+    setProjects(getProjects());
+    showToast(isNew ? `Project "${project.name}" created successfully` : 'Changes saved — client view updated');
+  }, [showToast]);
+
+  const handleDeleteProject = useCallback((id, name) => {
+    deleteProject(id);
+    setProjects(getProjects());
+    showToast(name ? `Project "${name}" deleted` : 'Project deleted');
+  }, [showToast]);
+
+  const closeTop = useCallback(() => {
+    if (authModalOpen) { setAuthModalOpen(false); return true; }
+    if (videoModal) { setVideoModal(null); return true; }
+    if (flowModal) { setFlowModal(null); return true; }
+    if (contactModal) { setContactModal(null); return true; }
+    if (detailId) {
+      handleBackFromDetail();
+      return true;
+    }
+    return false;
+  }, [authModalOpen, videoModal, flowModal, contactModal, detailId, handleBackFromDetail]);
 
   useEffect(() => {
     const onKey = (e) => {
@@ -51,59 +144,90 @@ export default function App() {
         return;
       }
       if (e.key === 'Escape') {
-        if (authOpen) { setAuthOpen(false); return; }
         if (document.activeElement === searchRef.current) { searchRef.current.blur(); return; }
-        if (selectedId) window.location.hash = '#/';
+        if (persona === 'demo') {
+          closeTop();
+        }
         return;
-      }
-      if (/^[1-9]$/.test(e.key) && !/input|textarea|select/i.test(e.target.tagName)) {
-        const p = PRODUCTS[Number(e.key) - 1];
-        if (p) window.location.hash = `#/${p.id}`;
       }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [authOpen, selectedId]);
+  }, [closeTop, persona]);
 
-  const filtered = useMemo(
-    () => filterProducts(PRODUCTS, { domain, tag, query }),
-    [domain, tag, query]);
-
-  const selected = selectedId ? CATALOG_DATA[selectedId] : null;
-
-  const lock = () => { setMode('shared'); showToast('Shared mode — credentials hidden'); };
-  const unlock = () => setAuthOpen(true);
+  const videoProject = videoModal ? projects[videoModal] : null;
+  const flowProject = flowModal ? projects[flowModal] : null;
+  const contactProject = contactModal ? projects[contactModal] : null;
+  const detailProject = detailId ? projects[detailId] : null;
 
   return (
-    <div className="shell">
-      <Sidebar
-        products={PRODUCTS}
-        filtered={filtered}
-        selectedId={selectedId}
-        domain={domain} setDomain={setDomain}
-        tag={tag} setTag={setTag}
-        query={query} setQuery={setQuery}
-        searchRef={searchRef}
-        mode={mode} onLock={lock} onUnlock={unlock}
-        theme={theme} onToggleTheme={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}
-      />
-      {selected ? (
-        <DetailPane product={selected} mode={mode} onUnlock={unlock} showToast={showToast} />
+    <>
+      {currentView === 'landing' ? (
+        <LandingPage
+          onEnterClient={handleEnterClient}
+          onEnterAdmin={handleEnterAdmin}
+        />
       ) : (
-        <OverviewPane
-          products={PRODUCTS}
-          filtered={filtered}
-          filteredBy={domain !== 'all' || tag !== 'All' || query.trim()}
-          onReset={() => { setDomain('all'); setTag('All'); setQuery(''); }}
+        <>
+          <Navbar
+            persona={persona}
+            authRole={authRole}
+            onGoToLanding={handleGoToLanding}
+            onSignOut={handleSignOut}
+          />
+          {persona === 'admin' && authRole === 'admin' ? (
+            <AdminView
+              projects={projects}
+              onSaveProject={handleSaveProject}
+              onDeleteProject={handleDeleteProject}
+              onPreviewProject={(id) => {
+                setReturnToAdmin(true);
+                setPersona('demo');
+                setDetailId(id);
+              }}
+            />
+          ) : detailProject ? (
+            <DetailPane
+              product={detailProject}
+              onBack={handleBackFromDetail}
+              onOpenVideo={setVideoModal}
+              onOpenFlow={setFlowModal}
+              onOpenContact={setContactModal}
+              isPreviewFromAdmin={returnToAdmin && authRole === 'admin'}
+            />
+          ) : (
+            <DemoView
+              products={Object.values(projects)}
+              searchRef={searchRef}
+              onOpenDetail={setDetailId}
+              onOpenVideo={setVideoModal}
+              onOpenFlow={setFlowModal}
+              onOpenContact={setContactModal}
+            />
+          )}
+        </>
+      )}
+
+      {/* Shared Modals */}
+      {videoProject && (
+        <DemoVideoModal project={videoProject} onClose={() => setVideoModal(null)} />
+      )}
+      {flowProject && (
+        <CompleteFlowModal project={flowProject} onClose={() => setFlowModal(null)} />
+      )}
+      {contactProject && (
+        <ContactDemoModal
+          project={contactProject}
+          onClose={() => setContactModal(null)}
+          onSubmitted={showToast}
         />
       )}
-      {authOpen && (
-        <AuthModal
-          onClose={() => setAuthOpen(false)}
-          onSuccess={() => { setMode('presenter'); setAuthOpen(false); showToast('Presenter mode — credentials visible'); }}
-        />
-      )}
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        onSuccess={handleAdminAuthSuccess}
+      />
       <Toast message={toast} />
-    </div>
+    </>
   );
 }

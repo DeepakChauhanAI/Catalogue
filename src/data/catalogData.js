@@ -4,6 +4,9 @@
 // CC Scanner:  CC_Number_Detection_Tool-main\deepak-scanner-update_new
 // PQC Scanner: D:\Project Files\PQC New
 // Anything not verifiable in those repos is not in this file.
+// Exception: category / lastUpdated / demoFlow / links are presentation-layer
+// demo-hub config, not product facts. githubUrl + productionUrl seed empty —
+// no public URLs exist for these repos; Admin fills them in.
 
 export const CATALOG_DATA = {
   dermadesk: {
@@ -19,7 +22,100 @@ export const CATALOG_DATA = {
     storage: 'MongoDB (in-memory repository fallback)',
     protocols: 'REST, Socket.IO realtime sync, QR-token mobile upload',
     tags: ['AI', 'Clinical Workflow', 'Realtime'],
+    category: 'Healthcare AI',
+    lastUpdated: 'Sep 12, 2026',
+    bannerTag: 'FEATURED',
+    repository: { githubUrl: '', branch: 'main', isPublic: false },
+    links: { productionUrl: '', stagingUrl: 'http://localhost:3000' },
+    demoFlow: {
+      completeFlow: { enabled: true, sandboxUrl: 'http://localhost:3000/workspace?demo=psoriasis', credentialsHint: 'No login — seeded psoriasis demo case' },
+      demoVideo: {
+        enabled: true,
+        videoUrl: 'https://mdn.github.io/shared-assets/videos/flower.mp4',
+        videoDuration: '4:20',
+        videoFileName: 'dermadesk-demo-overview.mp4',
+        videoSpecs: 'MP4 • 1280x720 • 45.6 MB',
+        thumbnailUrl: '/mockups/dermadesk_concept_thumb.jpg',
+        chapters: [
+          { timestamp: '0:00', title: 'Intro', description: 'What DermaDesk AI is and who it is for' },
+          { timestamp: '1:20', title: 'Clinical Intake', description: 'The 6-section, 46-question intake with conditional branching' },
+          { timestamp: '2:45', title: 'QR Photo Capture & AI Differential', description: 'Zero-login mobile capture synced live, physician verdict loop' }
+        ]
+      },
+      contactDemo: { enabled: true, inquiryEmail: 'sales-demos@enterprise.com' }
+    },
     talkTrack: 'Open the zero-setup psoriasis demo case, walk the 6 intake sections, then trigger the QR upload — scan it with your own phone and watch the photo land in the desktop workspace live. Close on the physician verdict loop: the AI proposes, the doctor disposes.',
+    versions: [
+      {
+        id: 'v2.1.0',
+        versionNumber: 'v2.1.0',
+        releaseName: 'Doctor-First Clinical Flow',
+        status: 'active',
+        releaseDate: 'Sep 12, 2026',
+        uniqueFeatures: [
+          'Zero-login QR mobile photo capture synced over Socket.IO',
+          'Multimodal LLM clinical differential with OpenAI/Gemini fallback',
+          'Physician verdict loop & diagnostic visit locking',
+          '6-section 46-question dynamic branching intake'
+        ],
+        deployments: [
+          {
+            id: 'dep-d1',
+            name: 'AWS ECS Production',
+            platform: 'AWS Cloud',
+            env: 'Production',
+            url: 'https://dermadesk.aws.enterprise.health',
+            status: 'Healthy',
+            regionOrPort: 'us-east-1',
+            note: 'Multi-AZ cluster with auto-scaling & HIPAA logging'
+          },
+          {
+            id: 'dep-d2',
+            name: 'Local Dev Server',
+            platform: 'Local Server',
+            env: 'Development',
+            url: 'http://localhost:3000',
+            status: 'Running',
+            regionOrPort: 'Port :3000',
+            note: 'Instant seeded psoriasis case at /workspace?demo=psoriasis'
+          },
+          {
+            id: 'dep-d3',
+            name: 'NestJS API Gateway',
+            platform: 'Local Server',
+            env: 'Development',
+            url: 'http://localhost:4001',
+            status: 'Running',
+            regionOrPort: 'Port :4001',
+            note: 'Socket.IO websocket gateway & Express backend'
+          }
+        ]
+      },
+      {
+        id: 'v1.4.0',
+        versionNumber: 'v1.4.0',
+        releaseName: 'Legacy Clinical Intake Base',
+        status: 'deprecated',
+        releaseDate: 'Apr 20, 2026',
+        uniqueFeatures: [
+          'Standard 3-page clinical questionnaire',
+          'Manual photo file uploads (no QR mobile sync)',
+          'Single-doctor review without differential ranking'
+        ],
+        deployments: [
+          {
+            id: 'dep-d4',
+            name: 'On-Premise Hospital Server',
+            platform: 'On-Premise',
+            env: 'Staging',
+            url: 'http://192.168.1.50:8080',
+            status: 'Maintenance',
+            regionOrPort: 'Internal LAN :8080',
+            note: 'Legacy EHR test node with static patient records'
+          }
+        ]
+      }
+    ],
     deployments: [
       { name: 'Instant Demo — Psoriasis Case', env: 'Web :3000 (no login)', url: 'http://localhost:3000/workspace?demo=psoriasis', status: 'Zero-setup seeded case', color: 'emerald' },
       { name: 'Clinic Workspace', env: 'Web :3000', url: 'http://localhost:3000/login', status: 'Register a clinic via /signup', color: 'cyan' },
@@ -34,7 +130,12 @@ export const CATALOG_DATA = {
       { name: 'Role Separation', status: 'Live', note: 'Front-desk runs intake; doctors review AI differentials and sign off' },
       { name: 'Zero-Setup Demo Mode', status: 'Live', note: 'Seeded psoriasis case at /workspace?demo=psoriasis for instant demonstrations' }
     ],
-    roadmap: null
+    roadmap: [
+      { title: 'Offline mobile capture queue', priority: 'Medium', status: 'in-progress', note: 'PWA service worker offline caching for image capture in low-connectivity examination rooms' },
+      { title: 'Multi-clinic EHR FHIR export', priority: 'High', status: 'planned', note: 'Standardized HL7/FHIR observation and diagnostic report integration for hospital EHR networks' },
+      { title: 'Multi-lesion longitudinal tracking', priority: 'Medium', status: 'planned', note: 'Side-by-side temporal progression analysis and dermoscopic lesion segmentation' },
+      { title: 'Zero-Login QR Handshake v1', priority: 'High', status: 'completed', note: 'Realtime Socket.IO desktop-to-mobile camera bridge and encrypted session tokens' }
+    ]
   },
 
   opd: {
@@ -50,7 +151,97 @@ export const CATALOG_DATA = {
     storage: 'SQLite (WAL mode, busy-timeout serialization, auto column migrations)',
     protocols: 'REST, WebSocket voice streaming (/ws/voice), Web Speech announcements',
     tags: ['AI', 'Clinical Workflow', 'Queue Ops'],
-    talkTrack: 'Register a patient at the kiosk, watch the token appear on the doctor rail, call the patient and hear the bilingual TV chime. Then hand the mic to Dhara — the Gemini voice intake extracts a 7-point clinical checklist while you watch. Land on the prescription writer with voice dictation.',
+    category: 'Healthcare AI',
+    lastUpdated: 'Sep 08, 2026',
+    repository: { githubUrl: '', branch: 'main', isPublic: false },
+    links: { productionUrl: '', stagingUrl: 'http://localhost:5173' },
+    demoFlow: {
+      completeFlow: { enabled: true, sandboxUrl: 'http://localhost:5173', credentialsHint: 'dr.rao / doctor123 (doctor console)' },
+      demoVideo: {
+        enabled: true,
+        videoUrl: 'https://mdn.github.io/shared-assets/videos/flower.mp4',
+        videoDuration: '5:12',
+        videoFileName: 'opd-intelligence-demo.mp4',
+        videoSpecs: 'MP4 • 1280x720 • 52.1 MB',
+        thumbnailUrl: '/mockups/opd_concept_thumb.jpg',
+        chapters: [
+          { timestamp: '0:00', title: 'Intro', description: 'One system: kiosk, voice intake, doctor console, waiting-room TV' },
+          { timestamp: '1:35', title: 'Kiosk & Dhara Voice Intake', description: 'Self-service registration and the Gemini Live checklist' },
+          { timestamp: '3:10', title: 'Doctor Console & Prescriptions', description: 'Token queue, EMR review, printable branded Rx' }
+        ]
+      },
+      contactDemo: { enabled: true, inquiryEmail: 'sales-demos@enterprise.com' }
+    },
+    versions: [
+      {
+        id: 'v2.0.0',
+        versionNumber: 'v2.0.0',
+        releaseName: 'Gemini Live & Kiosk Suite',
+        status: 'active',
+        releaseDate: 'Sep 08, 2026',
+        uniqueFeatures: [
+          'Dhara Voice Assistant with Gemini Live full-duplex audio',
+          'Deadlock-free sequential token engine on SQLite WAL',
+          'Doctor Console with printable branded EMR Rx writer',
+          'Bilingual waiting-room TV chime announcements'
+        ],
+        deployments: [
+          {
+            id: 'dep-o1',
+            name: 'Local Kiosk & Doctor Station',
+            platform: 'Local Server',
+            env: 'Development',
+            url: 'http://localhost:5173',
+            status: 'Running',
+            regionOrPort: 'Port :5173',
+            note: 'Frontend Vite dev server with kiosk & doctor routes'
+          },
+          {
+            id: 'dep-o2',
+            name: 'FastAPI Backend Engine',
+            platform: 'Local Server',
+            env: 'Development',
+            url: 'http://localhost:8000',
+            status: 'Running',
+            regionOrPort: 'Port :8000',
+            note: 'SQLite WAL token engine and voice streaming API'
+          },
+          {
+            id: 'dep-o3',
+            name: 'AWS Cloud Kiosk Pilot',
+            platform: 'AWS Cloud',
+            env: 'Production',
+            url: 'https://opd.aws.hospital-cloud.com',
+            status: 'Healthy',
+            regionOrPort: 'ap-south-1',
+            note: 'Piloting touch-kiosk multi-tenant deployment'
+          }
+        ]
+      },
+      {
+        id: 'v1.0.0',
+        versionNumber: 'v1.0.0',
+        releaseName: 'Physical Token Printer',
+        status: 'deprecated',
+        releaseDate: 'Feb 15, 2026',
+        uniqueFeatures: [
+          'Basic touch-screen token printing',
+          'Simple counter numeric display (no voice audio)'
+        ],
+        deployments: [
+          {
+            id: 'dep-o4',
+            name: 'Legacy Reception Counter',
+            platform: 'On-Premise',
+            env: 'Staging',
+            url: 'http://192.168.1.20:8000',
+            status: 'Maintenance',
+            regionOrPort: 'LAN Port :8000',
+            note: 'Legacy serial thermal printer gateway'
+          }
+        ]
+      }
+    ],
     deployments: [
       { name: 'Web App — Doctor Console', env: 'Vite :5173', url: 'http://localhost:5173', status: 'Doctor console — login required', color: 'emerald', user: 'dr.rao', pass: 'doctor123' },
       { name: 'Kiosk & Voice Intake', env: 'Vite :5173', url: 'http://localhost:5173', status: 'Kiosk + Dhara voice screens — login required', color: 'cyan', user: 'kiosk | dhara', pass: 'kiosk123 | dhara123' },
@@ -66,9 +257,10 @@ export const CATALOG_DATA = {
       { name: 'Deadlock-Free Token Engine', status: 'Live', note: 'Shared issue_token() pipeline over SQLite WAL with collision-safe sequential tokens across kiosk and voice channels' }
     ],
     roadmap: [
-      { title: 'Row-level authorization', priority: 'High', note: 'Per-doctor scoping of queue and patient data (hardening plan §1.4)' },
-      { title: 'Prescription immutability', priority: 'High', note: 'Server-issued Rx numbers and append-only visit writes (plan §4.2–4.3)' },
-      { title: 'Consent gate + idle timeout', priority: 'Medium', note: 'Kiosk consent capture and session expiry (plan §3.5)' }
+      { title: 'Prescription immutability', priority: 'High', status: 'in-progress', note: 'Server-issued Rx numbers and append-only visit writes (plan §4.2–4.3)' },
+      { title: 'Row-level authorization', priority: 'High', status: 'planned', note: 'Per-doctor scoping of queue and patient data (hardening plan §1.4)' },
+      { title: 'Consent gate + idle timeout', priority: 'Medium', status: 'planned', note: 'Kiosk consent capture and session expiry (plan §3.5)' },
+      { title: 'Bilingual Chime & Token Engine', priority: 'High', status: 'completed', note: 'Sequential SQLite WAL token generation and bilingual audio announcements' }
     ]
   },
 
@@ -85,7 +277,65 @@ export const CATALOG_DATA = {
     storage: 'SQLite checkpoint/membership index; runtime state under data/ — no cardholder data ever written to scanner disk',
     protocols: 'SMB, SSH/SFTP, HTTP console',
     tags: ['Security', 'PCI DSS', 'Discovery'],
+    category: 'Security',
+    lastUpdated: 'Aug 28, 2026',
+    repository: { githubUrl: '', branch: 'main', isPublic: false },
+    links: { productionUrl: '', stagingUrl: 'http://127.0.0.1:5050' },
+    demoFlow: {
+      completeFlow: { enabled: true, sandboxUrl: 'http://127.0.0.1:5050', credentialsHint: 'No built-in login — trusted network only' },
+      demoVideo: {
+        enabled: true,
+        videoUrl: 'https://mdn.github.io/shared-assets/videos/flower.mp4',
+        videoDuration: '3:48',
+        videoFileName: 'cc-scanner-evidence-pack.mp4',
+        videoSpecs: 'MP4 • 1280x720 • 38.9 MB',
+        thumbnailUrl: '/mockups/cc_scanner_concept_thumb.jpg',
+        chapters: [
+          { timestamp: '0:00', title: 'Intro', description: 'Agentless cardholder-data discovery — the in-house CDD replacement' },
+          { timestamp: '1:10', title: 'Detection Pipeline', description: 'Luhn/BIN validation, Presidio + spaCy NER context scoring, mask at detection' },
+          { timestamp: '2:30', title: 'QSA Evidence', description: 'Tamper-evident audit trail, resumable scans, coverage-gap registry' }
+        ]
+      },
+      contactDemo: { enabled: false, inquiryEmail: 'sales-demos@enterprise.com' }
+    },
     talkTrack: 'Lead with agentless: nothing is installed or executed on scanned machines, files are streamed and discarded, and every PAN is masked the moment it is detected — the scanner disk never holds cardholder data. Then the QSA evidence pack: tamper-evident audit trail, masked findings, coverage-gap registry.',
+    versions: [
+      {
+        id: 'v1.0.0',
+        versionNumber: 'v1.0.0',
+        releaseName: 'Agentless CDD Core',
+        status: 'active',
+        releaseDate: 'Aug 28, 2026',
+        uniqueFeatures: [
+          'Agentless fleet discovery over SMB (Windows) & SFTP (Linux)',
+          'Presidio + spaCy NER context scoring after Luhn validation',
+          'Immediate in-memory PAN/CVV masking at detection',
+          'PCI-DSS Req-10 tamper-evident SHA-256 audit log'
+        ],
+        deployments: [
+          {
+            id: 'dep-c1',
+            name: 'Central Scanner Console',
+            platform: 'Local Server',
+            env: 'Development',
+            url: 'http://127.0.0.1:5050',
+            status: 'Running',
+            regionOrPort: 'Port :5050',
+            note: 'FastAPI + Jinja2 scanner control center'
+          },
+          {
+            id: 'dep-c2',
+            name: 'AWS GovCloud Compliance Worker',
+            platform: 'AWS Cloud',
+            env: 'Production',
+            url: 'https://scanner-gov.sec.aws.internal',
+            status: 'Healthy',
+            regionOrPort: 'us-gov-west-1',
+            note: 'Scheduled S3 bucket and EBS snapshot auditor'
+          }
+        ]
+      }
+    ],
     deployments: [
       { name: 'Scanner Console', env: 'FastAPI :5050', url: 'http://127.0.0.1:5050', status: 'No built-in login — trusted network only', color: 'emerald' }
     ],
@@ -98,9 +348,10 @@ export const CATALOG_DATA = {
       { name: 'Tamper-Evident Audit Trail', status: 'Live', note: 'PCI-DSS Req-10 operational log with stable host identity (re-IP safe)' }
     ],
     roadmap: [
-      { title: 'Remote prefiltering', priority: 'High', note: 'Cut transferred bytes by prefiltering on the source system (parity plan A1)' },
-      { title: 'Split-pipeline execution modes', priority: 'Medium', note: 'Central vs distributed scan execution (parity plan 1.1–1.2)' },
-      { title: 'spaCy pipeline optimization', priority: 'Medium', note: 'Single shared NER model and batched inference for throughput (plan A3)' }
+      { title: 'Remote prefiltering', priority: 'High', status: 'in-progress', note: 'Cut transferred bytes by prefiltering on the source system (parity plan A1)' },
+      { title: 'Split-pipeline execution modes', priority: 'Medium', status: 'planned', note: 'Central vs distributed scan execution (parity plan 1.1–1.2)' },
+      { title: 'spaCy pipeline optimization', priority: 'Medium', status: 'planned', note: 'Single shared NER model and batched inference for throughput (plan A3)' },
+      { title: 'Tamper-Evident SHA-256 Audit Trail', priority: 'High', status: 'completed', note: 'PCI-DSS Req-10 compliant stable host event ledger across re-IP events' }
     ]
   },
 
@@ -117,7 +368,86 @@ export const CATALOG_DATA = {
     storage: 'SQLModel — SQLite or PostgreSQL (dual dialect)',
     protocols: 'AWS SDK read-only metadata collection; HTTPS dashboard',
     tags: ['Security', 'Post-Quantum', 'Discovery'],
+    category: 'Security',
+    lastUpdated: 'Aug 15, 2026',
+    repository: { githubUrl: '', branch: 'main', isPublic: false },
+    links: { productionUrl: '', stagingUrl: 'http://localhost:8000' },
+    demoFlow: {
+      completeFlow: { enabled: true, sandboxUrl: 'http://localhost:8000', credentialsHint: 'Unauthenticated by default — binds 127.0.0.1' },
+      demoVideo: {
+        enabled: false,
+        videoUrl: '',
+        videoDuration: '6:02',
+        thumbnailUrl: '/mockups/pqc_concept_thumb.jpg',
+        chapters: [
+          { timestamp: '0:00', title: 'Intro', description: 'Harvest-Now-Decrypt-Later and why CBOMs matter' },
+          { timestamp: '1:45', title: 'AWS Discovery', description: '35 read-only collectors across 42 service APIs' },
+          { timestamp: '3:40', title: 'Risk & Export', description: 'NIST taxonomy, Mosca scoring, CycloneDX 1.7 CBOM export' }
+        ]
+      },
+      contactDemo: { enabled: true, inquiryEmail: 'sales-demos@enterprise.com' }
+    },
     talkTrack: 'Frame Harvest-Now-Decrypt-Later, then run a scan: watch collectors fan out, the taxonomy bin every key, and the Mosca engine score the estate. The differentiator to land: honest coverage — when a permission is denied, the report says so and names the IAM action, instead of under-reporting silently like the commercial tools.',
+    versions: [
+      {
+        id: 'v1.2.0',
+        versionNumber: 'v1.2.0',
+        releaseName: 'NIST Taxonomy & Mosca Scoring',
+        status: 'active',
+        releaseDate: 'Aug 15, 2026',
+        uniqueFeatures: [
+          '35 AWS read-only collectors covering 42 service APIs',
+          '10-class NIST PQC taxonomy classification (IR 8105 / SP 800-57)',
+          'Mosca 6-factor quantum-adjusted risk scoring engine',
+          'CycloneDX 1.7 Cryptographic BOM (CBOM) XML/JSON export'
+        ],
+        deployments: [
+          {
+            id: 'dep-p1',
+            name: 'AWS Cloud CBOM Console',
+            platform: 'AWS Cloud',
+            env: 'Production',
+            url: 'https://pqc-scanner.aws.infosec-corp.com',
+            status: 'Healthy',
+            regionOrPort: 'us-west-2',
+            note: 'AWS Organization multi-account scanner console'
+          },
+          {
+            id: 'dep-p2',
+            name: 'Local Scanner CLI Dashboard',
+            platform: 'Local Server',
+            env: 'Development',
+            url: 'http://localhost:8000',
+            status: 'Running',
+            regionOrPort: 'Port :8000',
+            note: 'Local FastAPI + HTMX interactive development instance'
+          }
+        ]
+      },
+      {
+        id: 'v1.0.0',
+        versionNumber: 'v1.0.0',
+        releaseName: 'Initial KMS Key Audit',
+        status: 'deprecated',
+        releaseDate: 'Mar 10, 2026',
+        uniqueFeatures: [
+          'KMS RSA key-length scanner only',
+          'Simple CSV export'
+        ],
+        deployments: [
+          {
+            id: 'dep-p3',
+            name: 'Docker Test Sandbox',
+            platform: 'Docker / K8s',
+            env: 'Testing',
+            url: 'http://localhost:9090',
+            status: 'Maintenance',
+            regionOrPort: 'Container :9090',
+            note: 'Isolated container image for regression verification'
+          }
+        ]
+      }
+    ],
     deployments: [
       { name: 'Web Dashboard', env: 'FastAPI :8000', url: 'http://localhost:8000', status: 'Unauthenticated by default — binds 127.0.0.1', color: 'emerald' },
       { name: 'panacea CLI', env: 'Terminal', url: '', status: 'Headless runs for CI/CD and scheduled scans', color: 'purple' }
@@ -131,8 +461,9 @@ export const CATALOG_DATA = {
       { name: 'Honest Coverage Reporting', status: 'Live', note: 'Denied permissions, throttling, and unavailable services surface as named coverage gaps; incomplete scopes never reconcile' }
     ],
     roadmap: [
-      { title: 'Global-scope validation', priority: 'High', note: 'L1: region=global stamping and CloudFront min-TLS classification, blocked on admin write access' },
-      { title: 'Trigger-based coverage backlog', priority: 'Medium', note: 'Coverage plan items 5.10–5.16, scheduled on demand rather than by date' }
+      { title: 'Global-scope validation', priority: 'High', status: 'in-progress', note: 'L1: region=global stamping and CloudFront min-TLS classification, blocked on admin write access' },
+      { title: 'Trigger-based coverage backlog', priority: 'Medium', status: 'planned', note: 'Coverage plan items 5.10–5.16, scheduled on demand rather than by date' },
+      { title: 'Mosca 6-Factor Quantum Scoring', priority: 'High', status: 'completed', note: 'Automated CRQC risk calculations and NIST taxonomy cross-referencing' }
     ]
   }
 };
