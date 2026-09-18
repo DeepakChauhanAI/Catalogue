@@ -222,11 +222,13 @@ export default function App() {
           onSubmitted={showToast}
         />
       )}
-      <AuthModal
-        isOpen={authModalOpen}
-        onClose={() => setAuthModalOpen(false)}
-        onSuccess={handleAdminAuthSuccess}
-      />
+      {authModalOpen && (
+        <AuthModal
+          isOpen={authModalOpen}
+          onClose={() => setAuthModalOpen(false)}
+          onSuccess={handleAdminAuthSuccess}
+        />
+      )}
       <Toast message={toast} />
     </>
   );

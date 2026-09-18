@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { ShieldCheck, Lock, KeyRound, AlertCircle, X, Sparkles, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, Lock, KeyRound, AlertCircle, X } from 'lucide-react';
 
 export default function AuthModal({ isOpen, onClose, onSuccess }) {
-  const [passcode, setPasscode] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isAuthenticating, setIsAuthenticating] = useState(false);
 
@@ -12,16 +12,18 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
     e?.preventDefault();
     setError('');
 
-    if (!passcode) {
-      setError('Please enter your administrator passcode');
+    const trimmed = password.trim();
+    if (!trimmed) {
+      setError('Please enter your administrator password');
       return;
     }
 
     setIsAuthenticating(true);
 
     setTimeout(() => {
-      // Accept admin123 or admin or password
-      if (passcode.trim().toLowerCase() === 'admin123' || passcode.trim().toLowerCase() === 'admin' || passcode.trim().toLowerCase() === 'password') {
+      const lower = trimmed.toLowerCase();
+      // Accept admin123, admin, password, or UniversalDemo#2026
+      if (lower === 'admin123' || lower === 'admin' || lower === 'password' || trimmed === 'UniversalDemo#2026') {
         setIsAuthenticating(false);
         onSuccess({
           role: 'admin',
@@ -29,29 +31,17 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
         });
       } else {
         setIsAuthenticating(false);
-        setError('Invalid passcode. Use demo passcode: admin123');
+        setError('Invalid password. Demo password: admin123');
       }
-    }, 350);
-  };
-
-  const handleQuickSSO = () => {
-    setIsAuthenticating(true);
-    setError('');
-    setTimeout(() => {
-      setIsAuthenticating(false);
-      onSuccess({
-        role: 'admin',
-        roleLabel: 'Portfolio Administrator'
-      });
-    }, 350);
+    }, 300);
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose} role="dialog" aria-modal="true">
+    <div className="modal-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
       <div
         className="modal"
         style={{
-          maxWidth: 460,
+          maxWidth: 440,
           width: '92%',
           padding: '1.75rem',
           position: 'relative',
@@ -73,7 +63,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
         </button>
 
         {/* Modal Header */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.1rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
           <div style={{
             width: 40,
             height: 40,
@@ -89,7 +79,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
             <ShieldCheck size={20} />
           </div>
           <div>
-            <h2 className="t-md" style={{ fontWeight: 800, margin: 0 }}>
+            <h2 id="auth-modal-title" className="t-md" style={{ fontWeight: 800, margin: 0 }}>
               Admin Console Access
             </h2>
             <p className="t-xs" style={{ color: 'var(--text-secondary)', marginTop: '0.15rem' }}>
@@ -102,60 +92,38 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
           Portfolio Administration privileges allow managing releases, inspecting deployment infrastructure endpoints, and editing solution catalogs.
         </p>
 
-        {/* Quick Instant Verification Action */}
-        <div style={{
-          padding: '1rem',
-          background: 'var(--bg-subtle)',
-          border: '1px solid var(--border-light)',
-          borderRadius: 'var(--radius-sm)',
-          marginBottom: '1.25rem'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.6rem' }}>
-            <span style={{ fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--text-muted)' }}>
-              Quick Demonstration Access
-            </span>
-            <span className="badge badge-health" style={{ fontSize: '0.66rem', padding: '0.1rem 0.35rem' }}>
-              <CheckCircle2 size={10} style={{ marginRight: '0.2rem' }} /> Verified
-            </span>
-          </div>
-
-          <button
-            type="button"
-            className="btn-primary"
-            onClick={handleQuickSSO}
-            disabled={isAuthenticating}
-            style={{ width: '100%', justifyContent: 'center', gap: '0.5rem', padding: '0.65rem' }}
-          >
-            <Sparkles size={15} />
-            <span>{isAuthenticating ? 'Authenticating...' : '1-Click Admin Access (Demo Mode)'}</span>
-          </button>
-        </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', margin: '1rem 0' }}>
-          <div style={{ flex: 1, height: 1, background: 'var(--border-light)' }} />
-          <span className="t-xs" style={{ color: 'var(--text-muted)', fontWeight: 600 }}>OR ENTER PASSCODE</span>
-          <div style={{ flex: 1, height: 1, background: 'var(--border-light)' }} />
-        </div>
-
-        {/* Manual Passcode Form */}
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.9rem' }}>
+        {/* Administrator Password Form */}
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <div className="form-field" style={{ margin: 0 }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-              <Lock size={12} /> Administrator Passcode
+            <label htmlFor="admin-password-input" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+              <Lock size={12} /> Administrator Password
             </label>
             <div style={{ position: 'relative' }}>
               <input
+                id="admin-password-input"
                 type="password"
-                placeholder="Enter passcode (demo: admin123)"
-                value={passcode}
-                onChange={(e) => setPasscode(e.target.value)}
+                placeholder="Enter password (demo: admin123)"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 autoFocus
+                autoComplete="current-password"
+                disabled={isAuthenticating}
                 style={{ width: '100%', paddingLeft: '2.2rem' }}
               />
-              <KeyRound size={14} style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', pointerEvents: 'none' }} />
+              <KeyRound
+                size={14}
+                style={{
+                  position: 'absolute',
+                  left: '0.75rem',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  color: 'var(--text-muted)',
+                  pointerEvents: 'none'
+                }}
+              />
             </div>
             <span className="hint" style={{ fontSize: '0.72rem' }}>
-              Demo passcode: <code>admin123</code>
+              Demo password: <code>admin123</code>
             </span>
           </div>
 
@@ -175,7 +143,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
             </div>
           )}
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.6rem', marginTop: '0.5rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.6rem', marginTop: '0.25rem' }}>
             <button
               type="button"
               className="btn-secondary"
