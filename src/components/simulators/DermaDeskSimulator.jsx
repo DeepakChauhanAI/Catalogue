@@ -9,14 +9,15 @@ export default function DermaDeskSimulator() {
   const [photoUploaded, setPhotoUploaded] = useState(true);
   const [analyzing, setAnalyzing] = useState(false);
   const [aiResult, setAiResult] = useState({
-    primary: { name: 'Psoriasis (Plaque Type)', confidence: 92.4, icd: 'L40.0' },
+    primary: { name: 'Psoriasis (Plaque Type)', icd: 'L40.0' },
     differentials: [
-      { name: 'Eczema / Dermatitis', confidence: 21.6, icd: 'L30.0' },
-      { name: 'Lichen Planus', confidence: 7.8, icd: 'L43.9' }
+      { name: 'Eczema / Dermatitis', icd: 'L30.0' },
+      { name: 'Lichen Planus', icd: 'L43.9' },
+      { name: 'Pityriasis Rosea', icd: 'L42' }
     ],
     rationale: 'Strong consensus based on extensor distribution, silvery scales, Auspitz sign, and family history.'
   });
-  const [doctorVerification, setDoctorVerification] = useState('correct');
+  const [doctorVerification, setDoctorVerification] = useState({});
   const [signed, setSigned] = useState(false);
 
   // Form State matching the DEMO_WORKFLOW.md exact flow
@@ -36,10 +37,11 @@ export default function DermaDeskSimulator() {
     setTimeout(() => {
       setAnalyzing(false);
       setAiResult({
-        primary: { name: 'Psoriasis (Plaque Type)', confidence: 92.4, icd: 'L40.0' },
+        primary: { name: 'Psoriasis (Plaque Type)', icd: 'L40.0' },
         differentials: [
-          { name: 'Eczema / Dermatitis', confidence: 21.6, icd: 'L30.0' },
-          { name: 'Lichen Planus', confidence: 7.8, icd: 'L43.9' }
+          { name: 'Eczema / Dermatitis', icd: 'L30.0' },
+          { name: 'Lichen Planus', icd: 'L43.9' },
+          { name: 'Pityriasis Rosea', icd: 'L42' }
         ],
         rationale: 'Strong consensus based on extensor distribution, silvery scales, Auspitz sign, and family history.'
       });
@@ -107,7 +109,7 @@ export default function DermaDeskSimulator() {
             setStage(1); 
             setSigned(false); 
             setPhotoUploaded(true); 
-            setDoctorVerification('correct'); 
+            setDoctorVerification({}); 
           }} style={{ padding: '0.25rem 0.5rem', color: 'var(--text-muted)' }} title="Reset Simulation">
             <RefreshCw size={14} />
           </button>
@@ -269,7 +271,7 @@ export default function DermaDeskSimulator() {
               <div>
                 <span className="badge badge-health">Multimodal AI Output</span>
                 <h4 style={{ fontSize: '1.1rem', fontWeight: 800, marginTop: '0.25rem', color: 'var(--text-primary)' }}>
-                  #1 {aiResult.primary.name} ({aiResult.primary.confidence}%)
+                  #1 {aiResult.primary.name}
                 </h4>
                 <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>ICD-10: {aiResult.primary.icd}</div>
               </div>
@@ -281,12 +283,6 @@ export default function DermaDeskSimulator() {
                 {aiResult.differentials.map(d => (
                   <div key={d.name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.75rem' }}>
                     <span style={{ color: 'var(--text-secondary)' }}>{d.name} ({d.icd})</span>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <div style={{ width: 90, height: 6, background: 'var(--border-medium)', borderRadius: 'var(--radius-full)' }}>
-                        <div style={{ width: `${d.confidence}%`, height: '100%', background: 'var(--color-brand)' }}></div>
-                      </div>
-                      <span style={{ fontWeight: 600, width: 40, textAlign: 'right' }}>{d.confidence}%</span>
-                    </div>
                   </div>
                 ))}
               </div>
@@ -304,19 +300,30 @@ export default function DermaDeskSimulator() {
                 </div>
               </div>
               
-              <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
-                {[{ id: 'correct', label: '✓ Confirm Diagnosis' }, { id: 'incorrect', label: '✕ Reject AI' }].map(b => (
-                  <button
-                    key={b.id} onClick={() => setDoctorVerification(b.id)}
-                    style={{
-                      flex: 1, padding: '0.45rem', fontSize: '0.72rem', fontWeight: 700, borderRadius: 'var(--radius-xs)',
-                      border: '1px solid ' + (doctorVerification === b.id ? 'var(--color-health)' : 'var(--border-medium)'),
-                      background: doctorVerification === b.id ? 'var(--color-health)' : 'var(--bg-subtle)',
-                      color: doctorVerification === b.id ? '#fff' : 'var(--text-secondary)'
-                    }}
-                  >
-                    {b.label}
-                  </button>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem' }}>
+                {[aiResult.primary, ...aiResult.differentials].map((diag, i) => (
+                  <div key={diag.name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                      {i === 0 ? 'Primary: ' : ''}{diag.name}
+                    </span>
+                    <div style={{ display: 'flex', gap: '0.25rem' }}>
+                      {[{ id: 'accept', label: '✓ Accept' }, { id: 'partial', label: '~ Partial' }, { id: 'reject', label: '✕ Reject' }].map(b => (
+                        <button
+                          key={b.id}
+                          type="button"
+                          onClick={() => setDoctorVerification({ ...doctorVerification, [diag.name]: b.id })}
+                          style={{
+                            padding: '0.3rem 0.5rem', fontSize: '0.65rem', fontWeight: 700, borderRadius: 'var(--radius-xs)',
+                            border: '1px solid ' + (doctorVerification[diag.name] === b.id ? 'var(--color-health)' : 'var(--border-medium)'),
+                            background: doctorVerification[diag.name] === b.id ? 'var(--color-health)' : 'var(--bg-subtle)',
+                            color: doctorVerification[diag.name] === b.id ? '#fff' : 'var(--text-secondary)'
+                          }}
+                        >
+                          {b.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 ))}
               </div>
 
