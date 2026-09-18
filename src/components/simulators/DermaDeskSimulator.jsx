@@ -6,9 +6,16 @@ import {
 
 export default function DermaDeskSimulator() {
   const [stage, setStage] = useState(1);
-  const [photoUploaded, setPhotoUploaded] = useState(false);
+  const [photoUploaded, setPhotoUploaded] = useState(true);
   const [analyzing, setAnalyzing] = useState(false);
-  const [aiResult, setAiResult] = useState(null);
+  const [aiResult, setAiResult] = useState({
+    primary: { name: 'Psoriasis (Plaque Type)', confidence: 92.4, icd: 'L40.0' },
+    differentials: [
+      { name: 'Eczema / Dermatitis', confidence: 21.6, icd: 'L30.0' },
+      { name: 'Lichen Planus', confidence: 7.8, icd: 'L43.9' }
+    ],
+    rationale: 'Strong consensus based on extensor distribution, silvery scales, Auspitz sign, and family history.'
+  });
   const [doctorVerification, setDoctorVerification] = useState('correct');
   const [signed, setSigned] = useState(false);
 
@@ -91,8 +98,12 @@ export default function DermaDeskSimulator() {
             >
               {s.num}. {s.label}
             </button>
-          ))}
-          <button onClick={() => { setStage(1); setAiResult(null); setSigned(false); setPhotoUploaded(false); }} style={{ padding: '0.25rem 0.5rem', color: 'var(--text-muted)' }} title="Reset Simulation">
+          <button onClick={() => { 
+            setStage(1); 
+            setSigned(false); 
+            setPhotoUploaded(true); 
+            setDoctorVerification('correct'); 
+          }} style={{ padding: '0.25rem 0.5rem', color: 'var(--text-muted)' }} title="Reset Simulation">
             <RefreshCw size={14} />
           </button>
         </div>
