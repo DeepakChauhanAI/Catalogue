@@ -99,7 +99,7 @@ export default function DermaDeskSimulator() {
               {s.num}. {s.label}
             </button>
           ))}
-          <button onClick={() => { 
+          <button type="button" onClick={() => { 
             setStage(1); 
             setSigned(false); 
             setPhotoUploaded(true); 
@@ -122,7 +122,7 @@ export default function DermaDeskSimulator() {
             <InputField label="Skin Type (Fitzpatrick)" value={form.skinType} />
             <InputField label="Ethnic Background" value={form.ethnicity} />
           </div>
-          <button onClick={() => setStage(2)} className="btn-health" style={{ marginTop: '1rem', width: '100%' }}>Proceed to Section 2: Appearance &rarr;</button>
+          <button type="button" onClick={() => setStage(2)} className="btn-health" style={{ marginTop: '1rem', width: '100%' }}>Proceed to Section 2: Appearance &rarr;</button>
         </div>
       )}
 
@@ -143,8 +143,8 @@ export default function DermaDeskSimulator() {
             <InputField label="Count" value={form.count} />
           </div>
           <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-            <button onClick={() => setStage(1)} className="btn-secondary">&larr; Back</button>
-            <button onClick={() => setStage(3)} className="btn-health" style={{ flex: 1 }}>Proceed to Section 3: Symptoms &rarr;</button>
+            <button type="button" onClick={() => setStage(1)} className="btn-secondary">&larr; Back</button>
+            <button type="button" onClick={() => setStage(3)} className="btn-health" style={{ flex: 1 }}>Proceed to Section 3: Symptoms &rarr;</button>
           </div>
         </div>
       )}
@@ -161,8 +161,8 @@ export default function DermaDeskSimulator() {
             <InputField label="Whole-Body Symptoms" value={form.systemic} />
           </div>
           <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-            <button onClick={() => setStage(2)} className="btn-secondary">&larr; Back</button>
-            <button onClick={() => setStage(4)} className="btn-health" style={{ flex: 1 }}>Proceed to Section 4: Timeline &rarr;</button>
+            <button type="button" onClick={() => setStage(2)} className="btn-secondary">&larr; Back</button>
+            <button type="button" onClick={() => setStage(4)} className="btn-health" style={{ flex: 1 }}>Proceed to Section 4: Timeline &rarr;</button>
           </div>
         </div>
       )}
@@ -180,8 +180,8 @@ export default function DermaDeskSimulator() {
             <InputField label="Triggers / Worsens By" value={form.triggers} />
           </div>
           <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-            <button onClick={() => setStage(3)} className="btn-secondary">&larr; Back</button>
-            <button onClick={() => setStage(5)} className="btn-health" style={{ flex: 1 }}>Proceed to Section 5: Management &rarr;</button>
+            <button type="button" onClick={() => setStage(3)} className="btn-secondary">&larr; Back</button>
+            <button type="button" onClick={() => setStage(5)} className="btn-health" style={{ flex: 1 }}>Proceed to Section 5: Management &rarr;</button>
           </div>
         </div>
       )}
@@ -199,8 +199,8 @@ export default function DermaDeskSimulator() {
             <InputField label="Secondary Changes" value={form.secondaryChanges} />
           </div>
           <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-            <button onClick={() => setStage(4)} className="btn-secondary">&larr; Back</button>
-            <button onClick={() => setStage(6)} className="btn-health" style={{ flex: 1 }}>Proceed to Section 6: Images &rarr;</button>
+            <button type="button" onClick={() => setStage(4)} className="btn-secondary">&larr; Back</button>
+            <button type="button" onClick={() => setStage(6)} className="btn-health" style={{ flex: 1 }}>Proceed to Section 6: Images &rarr;</button>
           </div>
         </div>
       )}
@@ -230,7 +230,7 @@ export default function DermaDeskSimulator() {
                 <div style={{ textAlign: 'center', padding: '1rem', color: 'var(--text-muted)' }}>
                   <QrCode size={64} color="#0369a1" style={{ margin: '0 auto 0.5rem' }} />
                   <div style={{ fontSize: '0.7rem' }}>Awaiting mobile photo upload via QR...</div>
-                  <button onClick={() => setPhotoUploaded(true)} className="btn-secondary" style={{ marginTop: '0.5rem', fontSize: '0.65rem' }}>Simulate Scan</button>
+                  <button type="button" onClick={() => setPhotoUploaded(true)} className="btn-secondary" style={{ marginTop: '0.5rem', fontSize: '0.65rem' }}>Simulate Scan</button>
                 </div>
               ) : (
                 <div style={{ padding: '0.75rem', background: 'var(--bg-surface)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-medium)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
@@ -245,8 +245,8 @@ export default function DermaDeskSimulator() {
           </div>
 
           <div style={{ display: 'flex', gap: '1rem', marginTop: '1.25rem' }}>
-            <button onClick={() => setStage(5)} className="btn-secondary">&larr; Back</button>
-            <button onClick={handleRunAi} disabled={analyzing || !photoUploaded} className="btn-health" style={{ flex: 1 }}>
+            <button type="button" onClick={() => setStage(5)} className="btn-secondary">&larr; Back</button>
+            <button type="button" onClick={handleRunAi} disabled={analyzing || !photoUploaded} className="btn-health" style={{ flex: 1 }}>
               {analyzing ? (
                 <><RefreshCw size={14} className="animate-spin" /><span>Running AI Pipeline...</span></>
               ) : (
@@ -317,7 +317,7 @@ export default function DermaDeskSimulator() {
               </div>
 
               {!signed ? (
-                <button onClick={handleSignEncounter} className="btn-health" style={{ width: '100%' }}>
+                <button type="button" onClick={handleSignEncounter} className="btn-health" style={{ width: '100%' }}>
                   <FileText size={14} /> Confirm &amp; Sign Visit Note
                 </button>
               ) : (

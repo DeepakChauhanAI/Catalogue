@@ -33,19 +33,7 @@ export default function CompleteFlowModal({ project, onClose }) {
         </div>
 
         <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
-            <a
-              href={completeFlow.sandboxUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="btn-primary"
-            >
-              <ExternalLink size={14} /> Launch live sandbox
-            </a>
-            <span className="badge badge-neutral" style={{ alignSelf: 'center', gap: '0.45rem' }}>
-              <KeyRound size={13} /> {completeFlow.credentialsHint}
-            </span>
-          </div>
+          {/* External live sandbox link removed to keep everything in the same window using simulators */}
 
           {Simulator ? (
             <section>
