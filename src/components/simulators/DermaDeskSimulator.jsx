@@ -98,6 +98,7 @@ export default function DermaDeskSimulator() {
             >
               {s.num}. {s.label}
             </button>
+          ))}
           <button onClick={() => { 
             setStage(1); 
             setSigned(false); 
