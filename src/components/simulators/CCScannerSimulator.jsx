@@ -23,7 +23,7 @@ const INITIAL_FINDINGS = [
     bin: '411128 (Chase Bank)', 
     luhn: 'VALID (Mod-10)', 
     presidioScore: '0.98',
-    spacyContext: 'Found nearby: "EXP: 08/28", "CARDHOLDER: JENKINS/S"',
+    spacyContext: 'Found nearby: "EXP: 08/28", "CARDHOLDER: SHARMA/P"',
     status: 'Masked at Detection',
     line: 'Line 412'
   },

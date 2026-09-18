@@ -21,7 +21,8 @@ export default function DermaDeskSimulator() {
 
   // Form State matching the DEMO_WORKFLOW.md exact flow
   const [form, setForm] = useState({
-    age: '30–40', sex: 'Male', skinType: 'Fitzpatrick III', ethnicity: 'Caucasian',
+    patientName: 'Aarav Mehta',
+    age: '34 Yrs', sex: 'Male', skinType: 'Fitzpatrick IV (Medium-Brown / Indian)', ethnicity: 'South Asian (Indian)',
     lesionType: 'Plaque', texture: 'Scaly, Hyperkeratotic, Dry', color: 'Salmon, Red, White', 
     shape: 'Round, Oval', border: 'Well-defined, Raised', size: 'Medium', distribution: 'Extensor, Bilateral', 
     location: 'Elbow, Knee', count: 'Few (2–5)',
@@ -92,6 +93,7 @@ export default function DermaDeskSimulator() {
           ].map(s => (
             <button
               key={s.num}
+              type="button"
               onClick={() => setStage(s.num)}
               style={{
                 padding: '0.25rem 0.6rem', borderRadius: 'var(--radius-xs)', fontSize: '0.7rem', fontWeight: 600,
@@ -121,6 +123,7 @@ export default function DermaDeskSimulator() {
             Section 1: Patient Demographics
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <InputField label="Patient Full Name" value={form.patientName} />
             <InputField label="What Is Your Age?" value={form.age} />
             <InputField label="What Is Your Sex?" value={form.sex} />
             <InputField label="Skin Type (Fitzpatrick)" value={form.skinType} />
@@ -323,11 +326,11 @@ export default function DermaDeskSimulator() {
 
               {!signed ? (
                 <button type="button" onClick={handleSignEncounter} className="btn-health" style={{ width: '100%' }}>
-                  <FileText size={14} /> Confirm &amp; Sign Visit Note
+                  <FileText size={14} /> Confirm &amp; Sign Visit Note (Aarav Mehta)
                 </button>
               ) : (
                 <div style={{ padding: '0.75rem', background: 'var(--color-brand-subtle)', color: 'var(--color-brand)', borderRadius: 'var(--radius-sm)', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', fontWeight: 700, justifyContent: 'center' }}>
-                  <CheckCircle size={16} /> Clinical Encounter Signed Off &amp; Completed
+                  <CheckCircle size={16} /> Clinical Encounter #DM-2026-441 (Aarav Mehta) Signed Off &amp; Completed
                 </div>
               )}
             </div>

@@ -14,7 +14,7 @@ export default function OPDSimulator() {
   
   // Patient & Demographics
   const [patientPhone, setPatientPhone] = useState('9876543210');
-  const [patientName, setPatientName] = useState('Sarah Jenkins');
+  const [patientName, setPatientName] = useState('Priya Sharma');
   const [patientAge, setPatientAge] = useState(38);
   const [patientGender, setPatientGender] = useState('Female');
   const [visitType, setVisitType] = useState('new'); // 'new' | 'revisit_same' | 'revisit_new_issue'
@@ -72,8 +72,8 @@ export default function OPDSimulator() {
   // Play spoken bilingual chime announcement (Web Speech API with graceful fallback)
   const handlePlayChime = () => {
     setIsSpeakingChime(true);
-    const announcementEn = "Token Number GEN-104, Sarah Jenkins. Please proceed to Consultation Room 4 for Doctor Rao.";
-    const announcementHi = "टोकन नंबर GEN-104, कृपया कमरा नंबर 4 में डॉक्टर राव से मिलें।";
+    const announcementEn = "Token Number GEN-104, Priya Sharma. Please proceed to Consultation Room 4 for Doctor Rao.";
+    const announcementHi = "टोकन नंबर GEN-104, प्रिया शर्मा, कृपया कमरा नंबर 4 में डॉक्टर राव से मिलें।";
     setSpokenAnnouncementText(`${announcementEn} / ${announcementHi}`);
 
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
@@ -266,29 +266,29 @@ export default function OPDSimulator() {
               <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
                 <button 
                   type="button" 
-                  onClick={() => { setPatientName('Sarah Jenkins'); setPatientAge(38); setPatientGender('Female'); }}
+                  onClick={() => { setPatientName('Priya Sharma'); setPatientAge(38); setPatientGender('Female'); }}
                   style={{
                     padding: '0.25rem 0.6rem', fontSize: '0.7rem', borderRadius: 'var(--radius-xs)',
-                    background: patientName === 'Sarah Jenkins' ? 'var(--color-health-soft)' : 'var(--bg-surface)',
-                    border: '1px solid ' + (patientName === 'Sarah Jenkins' ? 'var(--color-health)' : 'var(--border-subtle)'),
-                    color: patientName === 'Sarah Jenkins' ? 'var(--color-health)' : 'var(--text-secondary)',
+                    background: patientName === 'Priya Sharma' ? 'var(--color-health-soft)' : 'var(--bg-surface)',
+                    border: '1px solid ' + (patientName === 'Priya Sharma' ? 'var(--color-health)' : 'var(--border-subtle)'),
+                    color: patientName === 'Priya Sharma' ? 'var(--color-health)' : 'var(--text-secondary)',
                     fontWeight: 700
                   }}
                 >
-                  ✓ Sarah Jenkins (38/F)
+                  ✓ Priya Sharma (38/F)
                 </button>
                 <button 
                   type="button" 
-                  onClick={() => { setPatientName('Ramesh Jenkins'); setPatientAge(42); setPatientGender('Male'); }}
+                  onClick={() => { setPatientName('Ramesh Sharma'); setPatientAge(42); setPatientGender('Male'); }}
                   style={{
                     padding: '0.25rem 0.6rem', fontSize: '0.7rem', borderRadius: 'var(--radius-xs)',
-                    background: patientName === 'Ramesh Jenkins' ? 'var(--color-health-soft)' : 'var(--bg-surface)',
-                    border: '1px solid ' + (patientName === 'Ramesh Jenkins' ? 'var(--color-health)' : 'var(--border-subtle)'),
-                    color: patientName === 'Ramesh Jenkins' ? 'var(--color-health)' : 'var(--text-secondary)',
+                    background: patientName === 'Ramesh Sharma' ? 'var(--color-health-soft)' : 'var(--bg-surface)',
+                    border: '1px solid ' + (patientName === 'Ramesh Sharma' ? 'var(--color-health)' : 'var(--border-subtle)'),
+                    color: patientName === 'Ramesh Sharma' ? 'var(--color-health)' : 'var(--text-secondary)',
                     fontWeight: 600
                   }}
                 >
-                  Ramesh Jenkins (42/M)
+                  Ramesh Sharma (42/M)
                 </button>
               </div>
             </div>
@@ -460,10 +460,10 @@ export default function OPDSimulator() {
                   Dhara (AI Voice Assistant):
                 </div>
                 <div style={{ color: 'var(--text-primary)', fontStyle: 'italic', marginBottom: '0.4rem' }}>
-                  "नमस्ते सारा जी, आपको यह बुखार कितने दिनों से है और क्या साथ में ठंड या उल्टी की शिकायत भी है?"
+                  "नमस्ते प्रिया जी, आपको यह बुखार कितने दिनों से है और क्या साथ में ठंड या उल्टी की शिकायत भी है?"
                 </div>
                 <div style={{ color: 'var(--text-secondary)' }}>
-                  <strong>Sarah Jenkins:</strong> "I've had 102°F fever since 3 days with severe chills, shivering and headache."
+                  <strong>Priya Sharma:</strong> "I've had 102°F fever since 3 days with severe chills, shivering and headache."
                 </div>
               </div>
 
@@ -564,7 +564,7 @@ export default function OPDSimulator() {
               </div>
 
               <div style={{ fontSize: '0.7rem', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '0.25rem', marginTop: '0.75rem', color: '#334155' }}>
-                <div><strong>Patient:</strong> Sarah Jenkins (38 / Female)</div>
+                <div><strong>Patient:</strong> Priya Sharma (38 / Female)</div>
                 <div><strong>Doctor:</strong> Dr. A. K. Rao (MD, Medicine)</div>
                 <div><strong>Room:</strong> Consultation Room 4 (1st Floor)</div>
                 <div><strong>Department:</strong> General Medicine</div>
@@ -687,7 +687,7 @@ export default function OPDSimulator() {
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                   {[
-                    { token: 'GEN-104', name: 'Sarah Jenkins', wait: '~2 mins', status: doctorStatus === 'called' ? 'CALLING NOW' : 'NEXT', highlight: true },
+                    { token: 'GEN-104', name: 'Priya Sharma', wait: '~2 mins', status: doctorStatus === 'called' ? 'CALLING NOW' : 'NEXT', highlight: true },
                     { token: 'GEN-105', name: 'Rajesh Gupta', wait: '~16 mins', status: 'Waiting', highlight: false },
                     { token: 'GEN-106', name: 'Sunita Devi', wait: '~28 mins', status: 'Waiting', highlight: false }
                   ].map(p => (
@@ -795,7 +795,7 @@ export default function OPDSimulator() {
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <span style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--color-health)' }}>GEN-104</span>
-                    <span style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--text-primary)' }}>Sarah Jenkins</span>
+                    <span style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--text-primary)' }}>Priya Sharma</span>
                     <span className="badge badge-neutral" style={{ fontSize: '0.65rem' }}>38 Y / Female</span>
                   </div>
                   <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>
@@ -941,7 +941,7 @@ export default function OPDSimulator() {
                 <span className="badge badge-health" style={{ marginLeft: 'auto', fontSize: '0.62rem' }}>Whisper / Gemini Transcribed</span>
               </div>
               <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', fontStyle: 'italic', lineHeight: 1.45 }}>
-                "Patient Sarah Jenkins presents on day 3 of acute febrile illness with temperature reaching 102.8°F, chills, retro-orbital headache, nausea, and severe arthralgia. Pharyngeal examination shows mild erythema without tonsillar exudate. Chest is clear on auscultation bilaterally. Abdomen soft, no hepatosplenomegaly. Blood pressure 124/82, pulse 98 bpm. Impression is acute viral febrile syndrome, suspecting Dengue fever prodrome. Advised oral Paracetamol 650mg TDS, Pantoprazole 40mg OD, oral hydration salts, and urgent Complete Blood Count with Dengue NS1 antigen testing."
+                "Patient Priya Sharma presents on day 3 of acute febrile illness with temperature reaching 102.8°F, chills, retro-orbital headache, nausea, and severe arthralgia. Pharyngeal examination shows mild erythema without tonsillar exudate. Chest is clear on auscultation bilaterally. Abdomen soft, no hepatosplenomegaly. Blood pressure 124/82, pulse 98 bpm. Impression is acute viral febrile syndrome, suspecting Dengue fever prodrome. Advised oral Paracetamol 650mg TDS, Pantoprazole 40mg OD, oral hydration salts, and urgent Complete Blood Count with Dengue NS1 antigen testing."
               </p>
             </div>
 
@@ -1051,7 +1051,7 @@ export default function OPDSimulator() {
 
               {/* Patient Meta Bar */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.5rem', background: 'var(--bg-subtle)', padding: '0.6rem 0.75rem', borderRadius: 'var(--radius-xs)', fontSize: '0.7rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
-                <div><strong>Patient:</strong> Sarah Jenkins</div>
+                <div><strong>Patient:</strong> Priya Sharma</div>
                 <div><strong>Age/Gender:</strong> 38 Y / Female</div>
                 <div><strong>Token:</strong> GEN-104</div>
                 <div><strong>Date:</strong> {new Date().toLocaleDateString()}</div>
