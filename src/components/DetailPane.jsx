@@ -446,11 +446,11 @@ export default function DetailPane({ product, onBack, onOpenVideo, onOpenFlow, o
                 { tier: '02 / Audio Gateway', name: 'Voice Streaming Gateway', tech: 'FastAPI + WebSocket (/ws/voice)', desc: 'Bi-directional audio streaming bridge connecting client mic to AI core.' },
                 { tier: '03 / Conversational AI', name: 'Dhara Voice Assistant', tech: 'Google Gemini Live Audio', desc: 'Full-duplex Hindi/English conversational triage and 7-point clinical checklists.' },
                 { tier: '04 / Queue Core', name: 'Token Engine & DB', tech: 'SQLite WAL (Collision-Free)', desc: 'Sequential token dispensing, doctor EMR console, and printable branded Rx.' }
-              ] : product.id === 'cc' ? [
-                { tier: '01 / Operator UI', name: 'Inspection Console', tech: 'Gradio UI + Realtime Stream', desc: 'Batch image drop-zone, live telemetry logs, and manual review views.' },
-                { tier: '02 / Vision OCR', name: 'Dual OCR Pipeline', tech: 'Surya OCR + TrOCR Core', desc: 'High-speed line detection and text segmentation for physical card scans.' },
-                { tier: '03 / Verification', name: 'NER & Luhn Validator', tech: 'RoBERTa Tokenizer + Luhn Alg', desc: 'Named entity identification combined with mathematical card checksum rules.' },
-                { tier: '04 / Security', name: 'In-Memory Redaction', tech: 'Zero Cloud Storage Cache', desc: 'Redact-in-place processing with tamper-evident cryptographic log generation.' }
+              ] : (product.id === 'cc_scanner' || product.id === 'cc') ? [
+                { tier: '01 / Architecture', name: 'Agentless Readers', tech: 'Native SMB (445) & SSH/SFTP (22)', desc: 'Direct in-memory network file streaming across Windows and Linux fleets without agents.' },
+                { tier: '02 / Engine', name: 'Extraction & Concurrency', tech: 'Two-Level Thread Pool + 30 Formats', desc: 'Pool of systems x pool of files with format-aware streaming text parsers.' },
+                { tier: '03 / Intelligence', name: 'Presidio + spaCy NER', tech: 'Luhn Mod-10 + NLP Context Scoring', desc: 'Pre-filters non-PAN bytes, validates issuer checksums, and scores nearby entity context.' },
+                { tier: '04 / Compliance', name: 'Masking & QSA Pack', tech: 'Zero-Disk Volatile Memory + Audit Log', desc: 'Masks at point of detection (Req 3.4) with SHA-256 tamper-evident evidence export.' }
               ] : [
                 { tier: '01 / Interface', name: 'Executive Dashboard & CLI', tech: 'FastAPI Dashboard + CLI', desc: 'Interactive posture browser, compliance reporting, and CLI automation.' },
                 { tier: '02 / Discovery', name: 'Cloud Collectors', tech: '35 AWS Collectors (42 APIs)', desc: 'Read-only inventorying across KMS, ACM, CloudFront, ELB, and Secrets.' },
