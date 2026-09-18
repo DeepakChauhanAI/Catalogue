@@ -47,6 +47,10 @@ export default function DermaDeskSimulator() {
     }, 1200);
   };
 
+  const handleSignEncounter = () => {
+    setSigned(true);
+  };
+
   const InputField = ({ label, value }) => (
     <div style={{ marginBottom: '0.75rem' }}>
       <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: '0.25rem' }}>
