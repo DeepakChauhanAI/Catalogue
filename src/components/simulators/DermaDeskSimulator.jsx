@@ -9,11 +9,10 @@ export default function DermaDeskSimulator() {
   const [photoUploaded, setPhotoUploaded] = useState(true);
   const [analyzing, setAnalyzing] = useState(false);
   const [aiResult, setAiResult] = useState({
-    primary: { name: 'Psoriasis (Plaque Type)', icd: 'L40.0' },
     differentials: [
+      { name: 'Psoriasis (Plaque Type)', icd: 'L40.0' },
       { name: 'Eczema / Dermatitis', icd: 'L30.0' },
-      { name: 'Lichen Planus', icd: 'L43.9' },
-      { name: 'Pityriasis Rosea', icd: 'L42' }
+      { name: 'Lichen Planus', icd: 'L43.9' }
     ],
     rationale: 'Strong consensus based on extensor distribution, silvery scales, Auspitz sign, and family history.'
   });
@@ -37,11 +36,10 @@ export default function DermaDeskSimulator() {
     setTimeout(() => {
       setAnalyzing(false);
       setAiResult({
-        primary: { name: 'Psoriasis (Plaque Type)', icd: 'L40.0' },
         differentials: [
+          { name: 'Psoriasis (Plaque Type)', icd: 'L40.0' },
           { name: 'Eczema / Dermatitis', icd: 'L30.0' },
-          { name: 'Lichen Planus', icd: 'L43.9' },
-          { name: 'Pityriasis Rosea', icd: 'L42' }
+          { name: 'Lichen Planus', icd: 'L43.9' }
         ],
         rationale: 'Strong consensus based on extensor distribution, silvery scales, Auspitz sign, and family history.'
       });
@@ -270,10 +268,6 @@ export default function DermaDeskSimulator() {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.85rem' }}>
               <div>
                 <span className="badge badge-health">Multimodal AI Output</span>
-                <h4 style={{ fontSize: '1.1rem', fontWeight: 800, marginTop: '0.25rem', color: 'var(--text-primary)' }}>
-                  #1 {aiResult.primary.name}
-                </h4>
-                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>ICD-10: {aiResult.primary.icd}</div>
               </div>
             </div>
 
@@ -301,10 +295,10 @@ export default function DermaDeskSimulator() {
               </div>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem' }}>
-                {[aiResult.primary, ...aiResult.differentials].map((diag, i) => (
+                {aiResult.differentials.map((diag) => (
                   <div key={diag.name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
                     <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
-                      {i === 0 ? 'Primary: ' : ''}{diag.name}
+                      {diag.name}
                     </span>
                     <div style={{ display: 'flex', gap: '0.25rem' }}>
                       {[{ id: 'accept', label: '✓ Accept' }, { id: 'partial', label: '~ Partial' }, { id: 'reject', label: '✕ Reject' }].map(b => (
