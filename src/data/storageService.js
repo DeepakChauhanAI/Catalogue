@@ -1,11 +1,13 @@
-// LocalStorage CRUD for projects & demo inquiries.
+// LocalStorage CRUD for projects, demo inquiries, and research studies.
 // Admin saves write through here; the Demo persona reads the same store,
 // so edits reflect instantly and survive reloads.
-import { CATALOG_DATA } from './catalogData.js';
+import { CATALOG_DATA, RESEARCH_DATA } from './catalogData.js';
 
 const PROJECTS_KEY = 'catalogue_projects';
 const INQUIRIES_KEY = 'catalogue_inquiries';
 const DELETED_KEY = 'catalogue_deleted_projects';
+const RESEARCHES_KEY = 'catalogue_researches';
+const DELETED_RESEARCH_KEY = 'catalogue_deleted_researches';
 
 const read = (key) => {
   try { return JSON.parse(localStorage.getItem(key)); } catch { return null; }
@@ -34,6 +36,44 @@ export function createDefaultProject() {
     category: 'Healthcare AI',
     lastUpdated: formattedDate,
     bannerTag: 'NEW',
+    lifecycle: {
+      status: 'active',
+      statusNote: 'Active sprint initiative',
+      lastActiveDate: formattedDate,
+      revivalReadiness: 'Production Ready',
+      owner: 'Product Team Lead',
+      department: 'Engineering & Architecture'
+    },
+    collateral: {
+      presentations: [
+        {
+          id: `ppt-${Date.now()}`,
+          title: 'Executive Client Presentation Deck',
+          type: 'Client Pitch Deck',
+          format: 'PPTX',
+          url: '',
+          lastModified: formattedDate,
+          notes: 'Standard client pitch and demonstration deck'
+        }
+      ],
+      sharepoint: [
+        {
+          id: `sp-${Date.now()}`,
+          title: 'Project Official SharePoint Site',
+          category: 'Project Root',
+          url: '',
+          notes: 'Primary collaboration folder on SharePoint'
+        }
+      ],
+      designAndDocs: [],
+      recordings: [],
+      governance: {
+        productOwner: '',
+        techLead: '',
+        department: '',
+        accessLevel: 'Internal Org SSO Required'
+      }
+    },
     repository: { githubUrl: '', branch: 'main', isPublic: false },
     links: { productionUrl: '', stagingUrl: '' },
     demoFlow: {
@@ -126,7 +166,17 @@ export function getProjects() {
         }
       };
 
-      projects[id] = { ...seed, ...override, demoFlow, roadmap, versions };
+      const lifecycle = {
+        ...seed.lifecycle,
+        ...(override.lifecycle || {})
+      };
+
+      const collateral = {
+        ...seed.collateral,
+        ...(override.collateral || {})
+      };
+
+      projects[id] = { ...seed, ...override, demoFlow, roadmap, versions, lifecycle, collateral };
     } else {
       const baseRoadmap = seed.roadmap ? seed.roadmap.map(r => ({ ...r, status: r.status || 'planned' })) : null;
       const baseVersions = seed.versions ? structuredClone(seed.versions) : null;
@@ -160,9 +210,102 @@ export function deleteProject(id) {
   write(DELETED_KEY, Array.from(deleted));
 }
 
+// ----------------------------------------------------
+// Research Studies CRUD
+// ----------------------------------------------------
+
+export function createDefaultResearch() {
+  const now = new Date();
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const formattedDate = `${monthNames[now.getMonth()]} ${now.getFullYear()}`;
+  const id = `spike-${Date.now()}`;
+  const codeNum = String(Date.now()).slice(-4);
+
+  return {
+    id,
+    code: `SPIKE-${codeNum}`,
+    title: '',
+    projectId: '',
+    projectName: '',
+    domain: 'healthcare',
+    type: 'tech-eval',
+    status: 'completed',
+    author: 'Engineering & Product Team',
+    leadResearchers: ['Engineering & Product Team'],
+    date: formattedDate,
+    context: '',
+    abstract: '',
+    decision: '',
+    keyTakeaways: [
+      'Preliminary evaluation highlights initial baseline findings.',
+      'Recommended proceeding with proof-of-concept testing.'
+    ],
+    keyFindings: [
+      'Preliminary evaluation highlights initial baseline findings.',
+      'Recommended proceeding with proof-of-concept testing.'
+    ],
+    deliverables: {
+      pptUrl: '',
+      sharepointFolder: '',
+      prototypeUrl: '',
+      notesUrl: '',
+      whitepaperUrl: ''
+    },
+    relatedProjects: [],
+    tags: ['Tech Spike', 'Internal Research']
+  };
+}
+
+export function getResearches() {
+  const overrides = read(RESEARCHES_KEY) || {};
+  const deleted = new Set(read(DELETED_RESEARCH_KEY) || []);
+  const researches = {};
+
+  for (const [id, seed] of Object.entries(RESEARCH_DATA)) {
+    if (deleted.has(id)) continue;
+    const override = overrides[id];
+    if (override) {
+      researches[id] = { ...seed, ...override };
+    } else {
+      researches[id] = structuredClone(seed);
+    }
+  }
+
+  // Runtime added
+  for (const [id, extra] of Object.entries(overrides)) {
+    if (!researches[id] && !deleted.has(id)) {
+      researches[id] = extra;
+    }
+  }
+
+  return researches;
+}
+
+export function saveResearch(research) {
+  const overrides = read(RESEARCHES_KEY) || {};
+  overrides[research.id] = research;
+  write(RESEARCHES_KEY, overrides);
+  const deleted = new Set(read(DELETED_RESEARCH_KEY) || []);
+  if (deleted.has(research.id)) {
+    deleted.delete(research.id);
+    write(DELETED_RESEARCH_KEY, Array.from(deleted));
+  }
+}
+
+export function deleteResearch(id) {
+  const overrides = read(RESEARCHES_KEY) || {};
+  delete overrides[id];
+  write(RESEARCHES_KEY, overrides);
+  const deleted = new Set(read(DELETED_RESEARCH_KEY) || []);
+  deleted.add(id);
+  write(DELETED_RESEARCH_KEY, Array.from(deleted));
+}
+
 export function resetToDefaults() {
   localStorage.removeItem(PROJECTS_KEY);
   localStorage.removeItem(DELETED_KEY);
+  localStorage.removeItem(RESEARCHES_KEY);
+  localStorage.removeItem(DELETED_RESEARCH_KEY);
 }
 
 export function getInquiries() {
@@ -174,4 +317,3 @@ export function submitInquiry(inquiry) {
   inquiries.push({ ...inquiry, submittedAt: new Date().toISOString() });
   write(INQUIRIES_KEY, inquiries);
 }
-

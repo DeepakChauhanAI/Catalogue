@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ArrowLeft, LayoutGrid, List, CheckCircle2, Clock, Calendar, Play, Sparkles,
   Activity, ShieldCheck, MessageSquareQuote, Users, ExternalLink, ArrowRight,
-  Layers, Server, Cpu, Lock, Copy, Check, Eye, Cloud
+  Layers, Server, Cpu, Lock, Copy, Check, Eye, Cloud, Presentation, Folder,
+  FileText, PauseCircle, Archive, Building2, Lightbulb
 } from 'lucide-react';
+import { RESEARCH_DATA } from '../data/catalogData';
 
 const DEFAULT_ROADMAP_ITEMS = [
   { title: 'Enterprise System Integration', priority: 'High', status: 'in-progress', note: 'Standardized REST/webhook endpoints and external system interoperability connectors' },
@@ -21,10 +23,27 @@ const STAGES = [
 // Client-facing detail view (opened from a ProjectCard).
 // Privacy guard: no launch panel, credentials, or deployment URLs here —
 // repository/links/deployments render only in the Admin persona.
-export default function DetailPane({ product, onBack, onOpenVideo, onOpenFlow, onOpenContact, isPreviewFromAdmin = false }) {
+export default function DetailPane({
+  product,
+  researches,
+  onBack,
+  onOpenVideo,
+  onOpenFlow,
+  onOpenContact,
+  isPreviewFromAdmin = false,
+  onNavigateToResearch
+}) {
   const [tab, setTab] = useState('overview');
   const [roadmapView, setRoadmapView] = useState('board');
   const [copiedEndpoint, setCopiedEndpoint] = useState(null);
+  const [copiedCollateral, setCopiedCollateral] = useState(null);
+
+  // Reset scroll to the very top whenever a project overview is opened or switched
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    if (document.documentElement) document.documentElement.scrollTop = 0;
+    if (document.body) document.body.scrollTop = 0;
+  }, [product?.id]);
 
   const isHealth = product.domain === 'healthcare';
   const { demoFlow } = product;
@@ -75,8 +94,19 @@ export default function DetailPane({ product, onBack, onOpenVideo, onOpenFlow, o
     ? product.roadmap
     : DEFAULT_ROADMAP_ITEMS;
 
+  const collateralCount = (product.collateral?.presentations?.length || 0) +
+    (product.collateral?.sharepoint?.length || 0) +
+    (product.collateral?.designAndDocs?.length || 0) +
+    (product.collateral?.recordings?.length || 0);
+
+  const allResearches = researches ? Object.values(researches) : Object.values(RESEARCH_DATA);
+  const relatedResearches = allResearches.filter(r =>
+    r.projectId === product.id || (r.relatedProjects || []).includes(product.id)
+  );
+
   const tabs = [
     { id: 'overview', label: 'Overview' },
+    { id: 'collateral', label: `Documents & Collateral (${collateralCount})` },
     { id: 'specs', label: 'Tech Specs' },
     { id: 'features', label: `Features (${product.features?.length || 0})` },
     { id: 'roadmap', label: `Roadmap (${roadmapItems.length})` },
@@ -222,6 +252,83 @@ export default function DetailPane({ product, onBack, onOpenVideo, onOpenFlow, o
                   </span>
                 ))}
               </div>
+            </div>
+          </div>
+
+          {/* Operational / Lifecycle Status Banner */}
+          {product.lifecycle?.status && product.lifecycle.status !== 'active' && (
+            <div className={`lifecycle-status-banner ${product.lifecycle.status}`}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
+                <span className={`lifecycle-status-icon ${product.lifecycle.status}`}>
+                  {product.lifecycle.status === 'on-hold' && <PauseCircle size={20} />}
+                  {product.lifecycle.status === 'maintenance' && <CheckCircle2 size={20} />}
+                  {product.lifecycle.status === 'archived' && <Archive size={20} />}
+                </span>
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+                    <span className="t-sm" style={{ fontWeight: 800 }}>
+                      Operational Status: {product.lifecycle.status === 'on-hold' ? 'On-Hold / Paused' : product.lifecycle.status === 'maintenance' ? 'Production / Maintenance' : 'Archived'}
+                    </span>
+                    {product.lifecycle.revivalReadiness && (
+                      <span className="badge badge-neutral" style={{ fontSize: '0.72rem' }}>
+                        Revival Readiness: <strong>{product.lifecycle.revivalReadiness}</strong>
+                      </span>
+                    )}
+                  </div>
+                  <p className="t-xs" style={{ color: 'var(--text-secondary)', marginTop: '0.25rem', lineHeight: 1.55 }}>
+                    {product.lifecycle.statusNote}
+                  </p>
+                  <div className="lifecycle-meta-row" style={{ display: 'flex', gap: '1rem', marginTop: '0.4rem', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                    <span>Last Active: <strong>{product.lifecycle.lastActiveDate || 'Recorded'}</strong></span>
+                    <span>Custodian: <strong>{product.lifecycle.owner || 'Lead Engineering'}</strong></span>
+                    <span>Department: <strong>{product.lifecycle.department || 'Enterprise Systems'}</strong></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Quick Collateral Strip */}
+          <div className="quick-collateral-strip">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-muted)', fontSize: '0.78rem' }}>
+              <FileText size={14} color="var(--primary)" />
+              <span><strong>Collateral Quick Links:</strong></span>
+            </div>
+            <div className="quick-collateral-actions">
+              {product.collateral?.presentations?.[0] && (
+                <a
+                  href={product.collateral.presentations[0].url || '#'}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="quick-collateral-btn ppt"
+                  title="Open executive pitch deck in PowerPoint"
+                >
+                  <Presentation size={13} />
+                  <span>{product.collateral.presentations[0].title || 'Open Pitch Deck'}</span>
+                  <ExternalLink size={11} />
+                </a>
+              )}
+              {product.collateral?.sharepoint?.[0] && (
+                <a
+                  href={product.collateral.sharepoint[0].url || '#'}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="quick-collateral-btn sp"
+                  title="Open official SharePoint project site"
+                >
+                  <Folder size={13} />
+                  <span>{product.collateral.sharepoint[0].title || 'SharePoint Site'}</span>
+                  <ExternalLink size={11} />
+                </a>
+              )}
+              <button
+                type="button"
+                className="quick-collateral-btn all"
+                onClick={() => setTab('collateral')}
+                title="View complete documentation vault"
+              >
+                <span>View All ({collateralCount}) Assets →</span>
+              </button>
             </div>
           </div>
 
@@ -587,6 +694,407 @@ export default function DetailPane({ product, onBack, onOpenVideo, onOpenFlow, o
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* ===== DOCUMENTS & COLLATERAL HUB ===== */}
+      {tab === 'collateral' && (
+        <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
+          {/* Header Card */}
+          <div className="card" style={{ padding: '1.4rem 1.6rem', background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(16, 185, 129, 0.05) 100%)', border: '1px solid rgba(99, 102, 241, 0.25)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.35rem' }}>
+                  <span className="domain-chip sec" style={{ padding: '0.2rem 0.6rem', fontSize: '0.72rem' }}>
+                    <FileText size={12} /> Project Collateral
+                  </span>
+                  <span className="badge badge-brand" style={{ fontSize: '0.72rem' }}>
+                    {collateralCount} Verified Artifact{collateralCount !== 1 ? 's' : ''}
+                  </span>
+                </div>
+                <h2 className="t-lg" style={{ fontWeight: 800, margin: 0 }}>
+                  Project Collateral, SharePoint & Presentations
+                </h2>
+                <p className="t-sm" style={{ color: 'var(--text-secondary)', marginTop: '0.3rem', maxWidth: '760px', lineHeight: 1.55 }}>
+                  The official collateral repository for <strong>{product.name}</strong>. Access verified PowerPoint decks, official SharePoint sites, system architecture specifications, and client demo recordings.
+                </p>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.35rem' }}>
+                <span className="badge badge-neutral" style={{ padding: '0.35rem 0.75rem', fontSize: '0.78rem' }}>
+                  Access: <strong>{product.collateral?.governance?.accessLevel || 'Internal Org SSO'}</strong>
+                </span>
+                <span className="t-xs" style={{ color: 'var(--text-muted)' }}>
+                  Last audit: {product.lastUpdated}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Section 1: Executive & Client Presentations */}
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.85rem' }}>
+              <Presentation size={17} color="var(--color-rose, #f43f5e)" />
+              <h3 className="t-md" style={{ fontWeight: 800 }}>Presentations & Pitch Decks</h3>
+              <span className="badge badge-neutral" style={{ fontSize: '0.7rem' }}>
+                {product.collateral?.presentations?.length || 0}
+              </span>
+            </div>
+
+            {(!product.collateral?.presentations || product.collateral.presentations.length === 0) ? (
+              <div className="card" style={{ padding: '1.5rem', color: 'var(--text-muted)', textAlign: 'center' }}>
+                No presentation decks registered yet.
+              </div>
+            ) : (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '1rem' }}>
+                {product.collateral.presentations.map((ppt, idx) => (
+                  <div key={ppt.id || idx} className="card collateral-card ppt">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span className="collateral-icon-badge ppt">
+                          <Presentation size={16} />
+                        </span>
+                        <div>
+                          <span className="badge badge-rose" style={{ fontSize: '0.68rem', textTransform: 'uppercase' }}>
+                            {ppt.type || 'Presentation'}
+                          </span>
+                        </div>
+                      </div>
+                      <span className="format-pill">{ppt.format || 'PPTX'}</span>
+                    </div>
+
+                    <h4 className="collateral-title" style={{ marginTop: '0.65rem' }}>{ppt.title}</h4>
+                    {ppt.notes && <p className="collateral-notes">{ppt.notes}</p>}
+
+                    <div className="collateral-card-footer">
+                      <span className="t-xs" style={{ color: 'var(--text-muted)' }}>
+                        Modified: {ppt.lastModified || 'Recent'}
+                      </span>
+                      <div style={{ display: 'flex', gap: '0.4rem' }}>
+                        <button
+                          type="button"
+                          className="btn-ghost"
+                          style={{ padding: '0.35rem 0.6rem', fontSize: '0.75rem', height: 'auto' }}
+                          onClick={() => {
+                            if (ppt.url) {
+                              navigator.clipboard?.writeText(ppt.url);
+                              setCopiedCollateral(ppt.id || idx);
+                              setTimeout(() => setCopiedCollateral(null), 2000);
+                            }
+                          }}
+                          title="Copy presentation link"
+                        >
+                          {copiedCollateral === (ppt.id || idx) ? <Check size={12} color="var(--color-health)" /> : <Copy size={12} />}
+                          <span>{copiedCollateral === (ppt.id || idx) ? 'Copied' : 'Copy'}</span>
+                        </button>
+                        {ppt.url ? (
+                          <a
+                            href={ppt.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="btn-primary"
+                            style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', height: 'auto', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+                          >
+                            <span>Open Deck</span>
+                            <ExternalLink size={12} />
+                          </a>
+                        ) : (
+                          <span className="t-xs" style={{ color: 'var(--text-muted)', alignSelf: 'center' }}>Link pending</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Section 2: SharePoint & Cloud Repositories */}
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.85rem' }}>
+              <Folder size={17} color="var(--primary)" />
+              <h3 className="t-md" style={{ fontWeight: 800 }}>SharePoint & Cloud Drives</h3>
+              <span className="badge badge-neutral" style={{ fontSize: '0.7rem' }}>
+                {product.collateral?.sharepoint?.length || 0}
+              </span>
+            </div>
+
+            {(!product.collateral?.sharepoint || product.collateral.sharepoint.length === 0) ? (
+              <div className="card" style={{ padding: '1.5rem', color: 'var(--text-muted)', textAlign: 'center' }}>
+                No SharePoint repositories registered yet.
+              </div>
+            ) : (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '1rem' }}>
+                {product.collateral.sharepoint.map((sp, idx) => (
+                  <div key={sp.id || idx} className="card collateral-card sp">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span className="collateral-icon-badge sp">
+                          <Folder size={16} />
+                        </span>
+                        <span className="badge badge-brand" style={{ fontSize: '0.68rem' }}>
+                          {sp.category || 'General'}
+                        </span>
+                      </div>
+                      <span className="badge badge-neutral" style={{ fontSize: '0.65rem' }}>SharePoint</span>
+                    </div>
+
+                    <h4 className="collateral-title" style={{ marginTop: '0.65rem' }}>{sp.title}</h4>
+                    {sp.notes && <p className="collateral-notes">{sp.notes}</p>}
+
+                    <div className="collateral-card-footer">
+                      <span className="t-xs font-mono" style={{ color: 'var(--text-muted)', maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {sp.url ? new URL(sp.url).pathname : 'SharePoint'}
+                      </span>
+                      <div style={{ display: 'flex', gap: '0.4rem' }}>
+                        <button
+                          type="button"
+                          className="btn-ghost"
+                          style={{ padding: '0.35rem 0.6rem', fontSize: '0.75rem', height: 'auto' }}
+                          onClick={() => {
+                            if (sp.url) {
+                              navigator.clipboard?.writeText(sp.url);
+                              setCopiedCollateral(sp.id || idx);
+                              setTimeout(() => setCopiedCollateral(null), 2000);
+                            }
+                          }}
+                          title="Copy SharePoint link"
+                        >
+                          {copiedCollateral === (sp.id || idx) ? <Check size={12} color="var(--color-health)" /> : <Copy size={12} />}
+                          <span>{copiedCollateral === (sp.id || idx) ? 'Copied' : 'Copy'}</span>
+                        </button>
+                        {sp.url ? (
+                          <a
+                            href={sp.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="btn-primary"
+                            style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', height: 'auto', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+                          >
+                            <span>Open Folder</span>
+                            <ExternalLink size={12} />
+                          </a>
+                        ) : (
+                          <span className="t-xs" style={{ color: 'var(--text-muted)', alignSelf: 'center' }}>Link pending</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Section 3: Technical Specifications, Architecture & Design */}
+          {product.collateral?.designAndDocs?.length > 0 && (
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.85rem' }}>
+                <Layers size={17} color="var(--color-sec, #818cf8)" />
+                <h3 className="t-md" style={{ fontWeight: 800 }}>Design Systems & API Contracts</h3>
+                <span className="badge badge-neutral" style={{ fontSize: '0.7rem' }}>
+                  {product.collateral.designAndDocs.length}
+                </span>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '1rem' }}>
+                {product.collateral.designAndDocs.map((doc, idx) => (
+                  <div key={doc.id || idx} className="card collateral-card docs">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem' }}>
+                      <span className="badge badge-sec" style={{ fontSize: '0.68rem' }}>{doc.type || 'Specification'}</span>
+                      <span className="t-xs" style={{ color: 'var(--text-muted)' }}>Interactive Canvas / Schema</span>
+                    </div>
+
+                    <h4 className="collateral-title" style={{ marginTop: '0.65rem' }}>{doc.title}</h4>
+                    {doc.notes && <p className="collateral-notes">{doc.notes}</p>}
+
+                    <div className="collateral-card-footer">
+                      <span className="t-xs font-mono" style={{ color: 'var(--text-muted)' }}>{doc.type}</span>
+                      {doc.url && (
+                        <a
+                          href={doc.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="btn-secondary"
+                          style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', height: 'auto', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+                        >
+                          <span>Open Resource</span>
+                          <ExternalLink size={12} />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Section 4: Recorded Walkthroughs & Demos */}
+          {product.collateral?.recordings?.length > 0 && (
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.85rem' }}>
+                <Play size={17} color="var(--color-health)" />
+                <h3 className="t-md" style={{ fontWeight: 800 }}>Recorded Client Walkthroughs</h3>
+                <span className="badge badge-neutral" style={{ fontSize: '0.7rem' }}>
+                  {product.collateral.recordings.length}
+                </span>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '1rem' }}>
+                {product.collateral.recordings.map((rec, idx) => (
+                  <div key={rec.id || idx} className="card collateral-card rec">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem' }}>
+                      <span className="badge badge-health" style={{ fontSize: '0.68rem' }}>{rec.platform || 'Recorded Session'}</span>
+                      <span className="t-xs font-mono" style={{ color: 'var(--text-secondary)' }}>
+                        <Clock size={11} style={{ display: 'inline', marginRight: 4 }} />
+                        {rec.duration || 'Session'}
+                      </span>
+                    </div>
+
+                    <h4 className="collateral-title" style={{ marginTop: '0.65rem' }}>{rec.title}</h4>
+                    {rec.notes && <p className="collateral-notes">{rec.notes}</p>}
+
+                    <div className="collateral-card-footer">
+                      <span className="t-xs" style={{ color: 'var(--text-muted)' }}>
+                        Recorded: {rec.recordedDate || 'Archived'}
+                      </span>
+                      {rec.url && (
+                        <a
+                          href={rec.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="btn-primary"
+                          style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', height: 'auto', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+                        >
+                          <Play size={12} fill="currentColor" />
+                          <span>Watch Recording</span>
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Section 5: Governance & Organizational Custodianship */}
+          <div className="card" style={{ padding: '1.4rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '1.1rem' }}>
+              <span className="overview-card-icon" style={{ background: 'var(--primary-subtle)', color: 'var(--primary)' }}>
+                <Building2 size={18} />
+              </span>
+              <div>
+                <h3 className="t-md" style={{ fontWeight: 800 }}>Governance, Ownership & Custodianship</h3>
+                <p className="t-xs" style={{ color: 'var(--text-secondary)' }}>Organizational points of contact and permissions</p>
+              </div>
+            </div>
+
+            <div className="governance-grid">
+              <div className="gov-item">
+                <span className="gov-label">Product Owner / Clinical Lead</span>
+                <span className="gov-val">{product.collateral?.governance?.productOwner || product.lifecycle?.owner || 'Assigned Lead'}</span>
+              </div>
+              <div className="gov-item">
+                <span className="gov-label">Technical Lead / Architect</span>
+                <span className="gov-val">{product.collateral?.governance?.techLead || 'System Architecture Group'}</span>
+              </div>
+              <div className="gov-item">
+                <span className="gov-label">Department / Business Unit</span>
+                <span className="gov-val">{product.collateral?.governance?.department || product.lifecycle?.department || 'Engineering Division'}</span>
+              </div>
+              <div className="gov-item">
+                <span className="gov-label">Data Clearance & Access Requirement</span>
+                <span className="gov-val font-mono">{product.collateral?.governance?.accessLevel || 'Internal Org SSO Required'}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Section 6: Internal Project Research & Tech Spikes (Admin / Inter-Enterprise Only) */}
+          {isPreviewFromAdmin && relatedResearches.length > 0 && (
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
+                <Lightbulb size={17} color="var(--primary)" />
+                <h3 className="t-md" style={{ fontWeight: 800 }}>Internal Research, Tech Spikes & Evaluations</h3>
+                <span className="badge badge-brand" style={{ fontSize: '0.7rem' }}>
+                  {relatedResearches.length} Documented
+                </span>
+              </div>
+              <p className="t-xs" style={{ color: 'var(--text-secondary)', marginBottom: '0.85rem' }}>
+                Technology evaluations, feasibility spikes, and user research conducted specifically for <strong>{product.name}</strong>.
+              </p>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+                {relatedResearches.map(res => {
+                  const isCompleted = res.status === 'completed' || res.status === 'concluded';
+                  return (
+                    <div key={res.id} className="card" style={{ padding: '1.25rem 1.4rem', borderLeft: `3px solid ${isCompleted ? 'var(--color-health)' : 'var(--primary)'}` }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.5rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <span className="badge badge-brand font-mono" style={{ fontSize: '0.72rem' }}>{res.code}</span>
+                          <span className={`badge ${isCompleted ? 'badge-health' : 'badge-amber'}`} style={{ fontSize: '0.72rem' }}>
+                            {isCompleted ? 'Adopted in Project' : 'Active Spike'}
+                          </span>
+                        </div>
+                        <span className="t-xs" style={{ color: 'var(--text-muted)' }}>{res.date}</span>
+                      </div>
+
+                      <h4 className="t-md" style={{ fontWeight: 800, marginTop: '0.5rem', color: 'var(--text-primary)' }}>
+                        {res.title}
+                      </h4>
+                      <p className="t-xs" style={{ color: 'var(--text-secondary)', marginTop: '0.3rem', lineHeight: 1.55 }}>
+                        {res.context || res.abstract}
+                      </p>
+
+                      {res.decision && (
+                        <div style={{
+                          marginTop: '0.65rem',
+                          padding: '0.5rem 0.75rem',
+                          background: isCompleted ? 'rgba(16, 185, 129, 0.08)' : 'rgba(99, 102, 241, 0.08)',
+                          borderRadius: 'var(--radius-xs)',
+                          fontSize: '0.75rem'
+                        }}>
+                          <span style={{ fontWeight: 800, color: isCompleted ? 'var(--color-health)' : 'var(--primary)', marginRight: '0.4rem' }}>
+                            Project Decision:
+                          </span>
+                          <span style={{ color: 'var(--text-primary)' }}>
+                            {res.decision}
+                          </span>
+                        </div>
+                      )}
+
+                      <div style={{ marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid var(--border-light)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
+                        <div className="t-xs" style={{ color: 'var(--text-muted)' }}>
+                          Contributor: <strong>{res.author || (res.leadResearchers || []).join(', ')}</strong>
+                        </div>
+                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                          {res.deliverables?.pptUrl && (
+                            <a href={res.deliverables.pptUrl} target="_blank" rel="noreferrer" className="btn-secondary" style={{ fontSize: '0.75rem', padding: '0.3rem 0.65rem' }}>
+                              <Presentation size={12} /> Slide Deck (PPT)
+                            </a>
+                          )}
+                          {res.deliverables?.sharepointFolder && (
+                            <a href={res.deliverables.sharepointFolder} target="_blank" rel="noreferrer" className="btn-secondary" style={{ fontSize: '0.75rem', padding: '0.3rem 0.65rem' }}>
+                              <Folder size={12} /> SharePoint Notes
+                            </a>
+                          )}
+                          {onNavigateToResearch && (
+                            <button
+                              type="button"
+                              className="btn-primary"
+                              style={{ fontSize: '0.75rem', padding: '0.3rem 0.65rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+                              onClick={() => onNavigateToResearch(res.id)}
+                            >
+                              <span>View Spike Brief</span>
+                              <ArrowRight size={11} />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       )}
 

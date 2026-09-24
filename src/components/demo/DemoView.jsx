@@ -1,12 +1,16 @@
 import React, { useMemo, useState } from 'react';
-import { Search, SlidersHorizontal, LayoutGrid, List, Sparkles, Activity, ShieldCheck } from 'lucide-react';
+import {
+  Search, SlidersHorizontal, LayoutGrid, List, Sparkles, Activity, ShieldCheck,
+  CheckCircle2, PauseCircle, Archive, BookOpen, Layers
+} from 'lucide-react';
 import ProjectCard from './ProjectCard';
-import { DOMAIN_FILTERS } from '../../data/catalogData';
+import { DOMAIN_FILTERS, LIFECYCLE_STATUSES } from '../../data/catalogData';
 import { filterProducts } from '../../data/filters';
 
 export default function DemoView({ products, searchRef, onOpenDetail, onOpenVideo, onOpenFlow, onOpenContact }) {
   const [query, setQuery] = useState('');
   const [domain, setDomain] = useState('all');
+  const [status, setStatus] = useState('all');
   const [viewMode, setViewMode] = useState(() => localStorage.getItem('catalogue_view_mode') || 'grid');
 
   const handleViewModeChange = (mode) => {
@@ -15,20 +19,27 @@ export default function DemoView({ products, searchRef, onOpenDetail, onOpenVide
   };
 
   const filtered = useMemo(
-    () => filterProducts(products, { domain, query }),
-    [products, domain, query]);
+    () => filterProducts(products, { domain, status, query }),
+    [products, domain, status, query]
+  );
 
   const healthProjects = products.filter(p => p.domain === 'healthcare').length;
   const secProjects = products.filter(p => p.domain === 'infosec').length;
-  const flowEnabledCount = products.filter(p => p.demoFlow?.completeFlow?.enabled).length;
+  const activeProjects = products.filter(p => (p.lifecycle?.status || 'active') === 'active').length;
+  const onHoldProjects = products.filter(p => p.lifecycle?.status === 'on-hold').length;
+  const collateralReadyCount = products.filter(p =>
+    (p.collateral?.presentations?.length > 0) || (p.collateral?.sharepoint?.length > 0)
+  ).length;
 
   return (
     <main className="showcase">
       <div className="showcase-header">
         <div>
-          <h1 className="t-hero" style={{ fontWeight: 900 }}>Project Showcase</h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <h1 className="t-hero" style={{ fontWeight: 900 }}>Solutions & Projects</h1>
+          </div>
           <p className="t-sm" style={{ color: 'var(--text-secondary)', marginTop: '0.3rem' }}>
-            Explore our interactive demos and product walkthroughs
+            Comprehensive showcase of organizational solutions, presentation decks, technical collateral, and interactive demos
           </p>
         </div>
         <div className="showcase-tools">
@@ -37,16 +48,16 @@ export default function DemoView({ products, searchRef, onOpenDetail, onOpenVide
             <input
               ref={searchRef}
               className="search-input"
-              style={{ paddingLeft: '2rem', minWidth: 240 }}
-              placeholder="Search projects…  (Ctrl+K)"
+              style={{ paddingLeft: '2rem', minWidth: 260 }}
+              placeholder="Search projects, decks, SharePoint… (Ctrl+K)"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
           </div>
           <span style={{ color: 'var(--text-faint)', display: 'flex' }}><SlidersHorizontal size={16} /></span>
-          <select className="filter-select" value={domain} onChange={(e) => setDomain(e.target.value)} aria-label="Filter by category">
+          <select className="filter-select" value={domain} onChange={(e) => setDomain(e.target.value)} aria-label="Filter by domain">
             {DOMAIN_FILTERS.map(d => (
-              <option key={d.id} value={d.id}>{d.label === 'All' ? 'All Categories' : d.label}</option>
+              <option key={d.id} value={d.id}>{d.label === 'All Domains' ? 'All Domains' : d.label}</option>
             ))}
           </select>
 
@@ -79,25 +90,32 @@ export default function DemoView({ products, searchRef, onOpenDetail, onOpenVide
         <div className="pulse-stats-group">
           <div className="pulse-stat-item">
             <span className="pulse-beacon" />
-            <span>Verified Solutions: <strong>{products.length}</strong></span>
+            <span>Catalogued Solutions: <strong>{products.length}</strong></span>
           </div>
           <div className="pulse-stat-item">
-            <Sparkles size={13} color="var(--primary)" />
-            <span>Sandbox Ready: <strong>{flowEnabledCount}/{products.length}</strong></span>
+            <CheckCircle2 size={13} color="var(--color-emerald, #10b981)" />
+            <span>Active Sprint: <strong>{activeProjects}</strong></span>
           </div>
+          {onHoldProjects > 0 && (
+            <div className="pulse-stat-item">
+              <PauseCircle size={13} color="var(--color-amber, #f59e0b)" />
+              <span>On-Hold / Paused: <strong>{onHoldProjects}</strong></span>
+            </div>
+          )}
           <div className="pulse-stat-item">
-            <ShieldCheck size={13} color="var(--color-health)" />
-            <span>Compliance: <strong>NIST & HIPAA Aligned</strong></span>
+            <BookOpen size={13} color="var(--primary)" />
+            <span>Collateral Linked: <strong>{collateralReadyCount}/{products.length}</strong></span>
           </div>
         </div>
 
+        {/* Domain Filter Pills */}
         <div className="pulse-domain-pills">
           <button
             type="button"
             className={`pulse-domain-btn ${domain === 'all' ? 'active' : ''}`}
             onClick={() => setDomain('all')}
           >
-            All ({products.length})
+            All Domains ({products.length})
           </button>
           <button
             type="button"
@@ -116,6 +134,38 @@ export default function DemoView({ products, searchRef, onOpenDetail, onOpenVide
         </div>
       </div>
 
+      {/* Secondary Lifecycle Status Filter Bar - only when multiple states exist (e.g. Admin) */}
+      {new Set(products.map(p => p.lifecycle?.status || 'active')).size > 1 && (
+        <div className="lifecycle-filter-bar">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+            <Layers size={14} />
+            <span><strong>Lifecycle State:</strong></span>
+          </div>
+          <div className="lifecycle-pills">
+            {LIFECYCLE_STATUSES.map(ls => {
+              const count = ls.id === 'all'
+                ? products.length
+                : products.filter(p => (p.lifecycle?.status || 'active') === ls.id).length;
+
+              if (count === 0 && ls.id !== 'all') return null;
+
+              return (
+                <button
+                  key={ls.id}
+                  type="button"
+                  className={`lifecycle-btn ${status === ls.id ? 'active' : ''} ${ls.dotClass}`}
+                  onClick={() => setStatus(ls.id)}
+                >
+                  <span className={`lifecycle-dot ${ls.dotClass}`} />
+                  <span>{ls.id === 'all' ? 'All Lifecycle States' : ls.label}</span>
+                  <span className="lifecycle-count">({count})</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       <div className={viewMode === 'grid' ? 'projects-grid' : 'projects-list'}>
         {filtered.map(p => (
           <ProjectCard
@@ -129,9 +179,17 @@ export default function DemoView({ products, searchRef, onOpenDetail, onOpenVide
           />
         ))}
         {filtered.length === 0 && (
-          <div className="card" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '3rem', gridColumn: '1 / -1' }}>
-            <p className="t-md" style={{ fontWeight: 700, color: 'var(--text-secondary)' }}>No projects match your search</p>
-            <p className="t-sm" style={{ marginTop: '0.3rem' }}>Try a different keyword or category</p>
+          <div className="card" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '3.5rem 2rem', gridColumn: '1 / -1' }}>
+            <p className="t-md" style={{ fontWeight: 700, color: 'var(--text-secondary)' }}>No projects match your filter criteria</p>
+            <p className="t-sm" style={{ marginTop: '0.4rem' }}>Try clearing your search keyword, category, or lifecycle status filter</p>
+            <button
+              type="button"
+              className="btn-secondary"
+              style={{ marginTop: '1.2rem', marginInline: 'auto' }}
+              onClick={() => { setQuery(''); setDomain('all'); setStatus('all'); }}
+            >
+              Reset All Filters
+            </button>
           </div>
         )}
       </div>

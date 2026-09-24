@@ -1,10 +1,14 @@
 import React from 'react';
-import { ShieldCheck, LogOut } from 'lucide-react';
+import { ShieldCheck, LogOut, Layers } from 'lucide-react';
 import BrandLogo from './BrandLogo';
 
 export default function Navbar({
   persona,
   authRole = 'client',
+  activeHub = 'projects',
+  onSwitchHub,
+  projectCount = 0,
+  researchCount = 0,
   onGoToLanding,
   onSignOut
 }) {
@@ -23,21 +27,35 @@ export default function Navbar({
         <div style={{ textAlign: 'left' }}>
           <div className="t-sm" style={{ fontWeight: 800, lineHeight: 1.2 }}>Enterprise Hub</div>
           <div className="t-xs" style={{ color: 'var(--text-muted)' }}>
-            {isAdmin ? 'Portfolio Admin Console' : 'Client Showcase'}
+            {isAdmin ? 'Knowledge & Portfolio Admin' : 'Solutions & Research'}
           </div>
         </div>
       </button>
 
+      {/* Center: Contextual Badge (No duplicate tab switcher) */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+        {isAdmin ? (
+          <span className="badge badge-brand" style={{ fontSize: '0.75rem', padding: '0.3rem 0.75rem', fontWeight: 600 }}>
+            <ShieldCheck size={13} style={{ marginRight: '0.35rem' }} />
+            Enterprise Management Console
+          </span>
+        ) : (
+          <span className="badge badge-neutral" style={{ fontSize: '0.75rem', padding: '0.3rem 0.75rem', fontWeight: 600 }}>
+            <Layers size={13} style={{ marginRight: '0.35rem', color: 'var(--primary)' }} />
+            Active Solutions & Projects Portfolio
+          </span>
+        )}
+      </div>
+
       {/* Right Side Header Items: Status Badge & Subtle Exit/LogOut Icon */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
         {isAdmin ? (
-          <span className="badge badge-brand" style={{ fontSize: '0.74rem', padding: '0.25rem 0.6rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-            <ShieldCheck size={12} />
-            <span>Admin Console</span>
+          <span className="badge badge-brand" style={{ fontSize: '0.74rem', padding: '0.25rem 0.6rem' }}>
+            Admin Mode
           </span>
         ) : (
           <span className="badge badge-health" style={{ fontSize: '0.74rem', padding: '0.25rem 0.6rem' }}>
-            Client Showcase
+            Demo Showcase
           </span>
         )}
 

@@ -1,26 +1,60 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   FolderKanban, Inbox, Pencil, Sparkles, Play, Calendar, Plus, Trash2, X,
   ChevronLeft, ChevronRight, ImageIcon, Eye, Mail, Activity, ShieldCheck,
-  TrendingUp, CheckCircle2, Server, LayoutGrid, List
+  TrendingUp, CheckCircle2, Server, LayoutGrid, List, Lightbulb, BookOpen,
+  PauseCircle, FileText, Search, Clock, Layers, Presentation, ExternalLink,
+  Code2, Tag, ArrowUpRight, RotateCcw
 } from 'lucide-react';
 import EditProjectView from './EditProjectView';
 import ProjectCard from '../demo/ProjectCard';
-import { getInquiries, createDefaultProject } from '../../data/storageService';
+import ResearchCard from '../research/ResearchCard';
+import ResearchListRow from '../research/ResearchListRow';
+import EditResearchModal from '../research/EditResearchModal';
+import ResearchDetailModal from '../research/ResearchDetailModal';
+import { getInquiries, createDefaultProject, createDefaultResearch } from '../../data/storageService';
+import { filterResearches } from '../../data/filters';
+import { RESEARCH_TYPES, RESEARCH_STATUSES, normalizeDeliverables } from '../../data/catalogData';
+import { DeliverableIcon, getDeliverableClass } from '../research/deliverableUtils';
 
 const NAV = [
-  { id: 'projects', label: 'Projects', icon: FolderKanban },
+  { id: 'projects', label: 'Solutions & Projects', icon: FolderKanban },
+  { id: 'research', label: 'Project Research & Spikes', icon: Lightbulb },
   { id: 'inquiries', label: 'Demo Requests', icon: Inbox }
 ];
 
-export default function AdminView({ projects, onSaveProject, onDeleteProject, onPreviewProject }) {
+export default function AdminView({
+  projects,
+  researches = {},
+  onSaveProject,
+  onDeleteProject,
+  onPreviewProject,
+  onSaveResearch,
+  onDeleteResearch
+}) {
   const [view, setView] = useState('projects');
   const [editingId, setEditingId] = useState(null);
   const [isCreating, setIsCreating] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState(null);
+
+  // Research Management State
+  const [editingResearchId, setEditingResearchId] = useState(null);
+  const [isCreatingResearch, setIsCreatingResearch] = useState(false);
+  const [researchToDelete, setResearchToDelete] = useState(null);
+  const [previewResearchId, setPreviewResearchId] = useState(null);
+
   const [adminViewMode, setAdminViewMode] = useState(() => {
     try { return localStorage.getItem('catalogue_admin_view_mode') || 'grid'; } catch { return 'grid'; }
   });
+  const [researchViewMode, setResearchViewMode] = useState(() => {
+    try { return localStorage.getItem('catalogue_admin_research_view_mode') || 'grid'; } catch { return 'grid'; }
+  });
+  const [researchQuery, setResearchQuery] = useState('');
+  const [researchDomain, setResearchDomain] = useState('all');
+  const [researchStatus, setResearchStatus] = useState('all');
+  const [researchType, setResearchType] = useState('all');
+  const [researchProjectId, setResearchProjectId] = useState('all');
+
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
     try { return localStorage.getItem('catalogue_admin_sidebar_collapsed') === 'true'; } catch { return false; }
   });
@@ -38,17 +72,30 @@ export default function AdminView({ projects, onSaveProject, onDeleteProject, on
     try { localStorage.setItem('catalogue_admin_view_mode', mode); } catch {}
   };
 
+  const handleResearchViewModeChange = (mode) => {
+    setResearchViewMode(mode);
+    try { localStorage.setItem('catalogue_admin_research_view_mode', mode); } catch {}
+  };
+
   const list = Object.values(projects);
+  const researchList = Object.values(researches);
   const inquiries = getInquiries();
   const editing = editingId ? projects[editingId] : null;
+  const editingResearch = editingResearchId ? researches[editingResearchId] : null;
+  const previewResearch = previewResearchId ? researches[previewResearchId] : null;
 
-  // Executive Telemetry Computations
-  const healthCount = list.filter(p => p.domain === 'healthcare').length;
-  const secCount = list.filter(p => p.domain === 'infosec').length;
-  const flowCount = list.filter(p => p.demoFlow?.completeFlow?.enabled).length;
-  const videoCount = list.filter(p => p.demoFlow?.demoVideo?.enabled).length;
-  const flowPct = Math.round((flowCount / (list.length || 1)) * 100);
-  const videoPct = Math.round((videoCount / (list.length || 1)) * 100);
+  // Filtered research list
+  const filteredResearchList = useMemo(() => {
+    return filterResearches(researchList, {
+      domain: researchDomain,
+      status: researchStatus,
+      type: researchType,
+      projectId: researchProjectId,
+      query: researchQuery
+    });
+  }, [researchList, researchDomain, researchStatus, researchType, researchProjectId, researchQuery]);
+
+
 
   return (
     <div className="admin-shell">
@@ -60,13 +107,14 @@ export default function AdminView({ projects, onSaveProject, onDeleteProject, on
           <div style={{
             width: 30, height: 30, borderRadius: 'var(--radius-sm)', flexShrink: 0,
             background: 'linear-gradient(135deg, #6366f1, #4f46e5)', color: '#fff',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '0.8rem', fontWeight: 900
-          }}>DF</div>
+            display: 'flex', alignItems: 'center', justifyContent: 'center'
+          }}>
+            <Layers size={16} />
+          </div>
           {!isSidebarCollapsed && (
             <div>
-              <div className="t-sm" style={{ fontWeight: 800 }}>DemoFlow</div>
-              <div className="t-xs" style={{ color: 'var(--text-muted)' }}>Admin Portal</div>
+              <div className="t-sm" style={{ fontWeight: 800 }}>Enterprise Hub</div>
+              <div className="t-xs" style={{ color: 'var(--text-muted)' }}>Admin Console</div>
             </div>
           )}
         </div>
@@ -74,23 +122,24 @@ export default function AdminView({ projects, onSaveProject, onDeleteProject, on
         {NAV.map(n => (
           <button
             key={n.id}
-            onClick={() => { setView(n.id); setEditingId(null); setIsCreating(false); }}
+            onClick={() => {
+              setView(n.id);
+              setEditingId(null);
+              setIsCreating(false);
+              setEditingResearchId(null);
+              setIsCreatingResearch(false);
+            }}
             className={`admin-nav-item ${view === n.id && !editing && !isCreating ? 'active' : ''}`}
             title={isSidebarCollapsed ? n.label : undefined}
           >
             <n.icon size={16} />
             {!isSidebarCollapsed && (
-              <>
-                <span style={{ flex: 1, textAlign: 'left' }}>{n.label}</span>
-                {n.id === 'inquiries' && inquiries.length > 0 && (
-                  <span className="badge badge-brand" style={{ fontSize: '0.7rem', padding: '0.1rem 0.45rem' }}>{inquiries.length}</span>
-                )}
-              </>
+              <span style={{ flex: 1, textAlign: 'left' }}>{n.label}</span>
             )}
           </button>
         ))}
 
-        {/* Sidebar Footer with Right-Aligned Subtle < or > Toggle */}
+        {/* Sidebar Footer with Collapse Toggle */}
         <div className="sidebar-footer">
           <button
             type="button"
@@ -106,6 +155,7 @@ export default function AdminView({ projects, onSaveProject, onDeleteProject, on
 
       <div className="admin-content-area">
         <main className="admin-main">
+          {/* Creating or Editing Project */}
           {isCreating ? (
             <EditProjectView
               project={createDefaultProject()}
@@ -131,9 +181,9 @@ export default function AdminView({ projects, onSaveProject, onDeleteProject, on
               {/* Top Header */}
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
                 <div>
-                  <h1 className="t-xl" style={{ fontWeight: 900, marginBottom: '0.3rem' }}>Operations Command Center</h1>
+                  <h1 className="t-xl" style={{ fontWeight: 900, marginBottom: '0.3rem' }}>Solutions & Projects Command Center</h1>
                   <p className="t-sm" style={{ color: 'var(--text-secondary)' }}>
-                    Manage solutions portfolio, configure interactive capabilities, and review deployments
+                    Manage organization solutions portfolio, lifecycle statuses, PowerPoint presentations, and SharePoint directories
                   </p>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
@@ -163,60 +213,13 @@ export default function AdminView({ projects, onSaveProject, onDeleteProject, on
                     className="btn-primary"
                     onClick={() => { setIsCreating(true); setEditingId(null); }}
                   >
-                    <Plus size={15} /> Add Project
+                    <Plus size={15} /> Add Solution
                   </button>
                 </div>
               </div>
 
-              {/* Executive Operations KPI Dashboard */}
-              <div className="admin-kpi-grid">
-                <div className="admin-kpi-card">
-                  <div className="admin-kpi-top">
-                    <span className="admin-kpi-label">Active Solutions</span>
-                    <FolderKanban size={16} className="admin-kpi-icon" />
-                  </div>
-                  <div className="admin-kpi-val">{list.length}</div>
-                  <div className="admin-kpi-sub">
-                    <span style={{ color: 'var(--color-health)' }}>{healthCount} HealthCare</span> · <span style={{ color: 'var(--color-sec)' }}>{secCount} InfoSec</span>
-                  </div>
-                </div>
 
-                <div className="admin-kpi-card">
-                  <div className="admin-kpi-top">
-                    <span className="admin-kpi-label">Sandbox Readiness</span>
-                    <Sparkles size={16} color="var(--primary)" />
-                  </div>
-                  <div className="admin-kpi-val">{flowPct}%</div>
-                  <div className="admin-kpi-sub">
-                    <CheckCircle2 size={12} color="var(--color-health)" />
-                    <span>{flowCount} of {list.length} Interactive Flows active</span>
-                  </div>
-                </div>
-
-                <div className="admin-kpi-card">
-                  <div className="admin-kpi-top">
-                    <span className="admin-kpi-label">Video Coverage</span>
-                    <Play size={16} color="var(--text-secondary)" />
-                  </div>
-                  <div className="admin-kpi-val">{videoPct}%</div>
-                  <div className="admin-kpi-sub">
-                    <span>{videoCount} walkthroughs configured</span>
-                  </div>
-                </div>
-
-                <div className="admin-kpi-card">
-                  <div className="admin-kpi-top">
-                    <span className="admin-kpi-label">Client Inquiries</span>
-                    <Inbox size={16} color="var(--text-secondary)" />
-                  </div>
-                  <div className="admin-kpi-val">{inquiries.length}</div>
-                  <div className="admin-kpi-sub">
-                    <span>{inquiries.length > 0 ? 'Submissions from demo showcase' : 'No pending inquiries'}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Unified Rich Project Cards (Grid or List Layout) */}
+              {/* Unified Rich Project Cards */}
               <div className={adminViewMode === 'grid' ? 'projects-grid' : 'projects-list'}>
                 {list.map(p => (
                   <ProjectCard
@@ -231,7 +234,227 @@ export default function AdminView({ projects, onSaveProject, onDeleteProject, on
                 ))}
               </div>
             </>
+          ) : view === 'research' ? (
+            /* Research Studies Management View */
+            <>
+              {/* Header */}
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
+                <div>
+                  <h1 className="t-xl" style={{ fontWeight: 900, marginBottom: '0.3rem' }}>Project Research & Tech Spikes</h1>
+                  <p className="t-sm" style={{ color: 'var(--text-secondary)' }}>
+                    Manage internal tech evaluations, competitor analyses, architecture spikes, and project outcomes
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  className="btn-primary"
+                  onClick={() => setIsCreatingResearch(true)}
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}
+                >
+                  <Plus size={15} /> Add Research Note
+                </button>
+              </div>
+
+
+              {/* Research Interactive Command & Filter Toolbar */}
+              <div className="research-toolbar" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', padding: '0.9rem 1.15rem' }}>
+                {/* Top Row: Search Input + Mode Toggle + Add Action */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.85rem', width: '100%', flexWrap: 'wrap' }}>
+                  <div className="research-search-wrap" style={{ flex: '1 1 300px', maxWidth: 'none' }}>
+                    <Search size={14} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                    <input
+                      className="search-input"
+                      placeholder="Search notes, spikes, decisions... (Ctrl+K)"
+                      value={researchQuery}
+                      onChange={(e) => setResearchQuery(e.target.value)}
+                      aria-label="Search research notes"
+                    />
+                    <span className="search-shortcut-hint">Ctrl+K</span>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexShrink: 0 }}>
+                    {/* Grid vs List View Switcher */}
+                    <div className="view-mode-toggle" role="group" aria-label="Research layout toggle">
+                      <button
+                        type="button"
+                        className={`view-toggle-btn ${researchViewMode === 'grid' ? 'active' : ''}`}
+                        onClick={() => handleResearchViewModeChange('grid')}
+                        title="Grid View"
+                        aria-label="Switch to Grid View"
+                      >
+                        <LayoutGrid size={15} />
+                      </button>
+                      <button
+                        type="button"
+                        className={`view-toggle-btn ${researchViewMode === 'list' ? 'active' : ''}`}
+                        onClick={() => handleResearchViewModeChange('list')}
+                        title="List View"
+                        aria-label="Switch to List View"
+                      >
+                        <List size={15} />
+                      </button>
+                    </div>
+
+                    <button
+                      className="btn-primary"
+                      onClick={() => { setIsCreatingResearch(true); setEditingResearchId(null); }}
+                      style={{ padding: '0.45rem 0.85rem', fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+                    >
+                      <Plus size={14} /> Add Note
+                    </button>
+                  </div>
+                </div>
+
+                {/* Bottom Row: Filter Strip */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap', width: '100%', borderTop: '1px solid var(--border-light, #e2e8f0)', paddingTop: '0.65rem' }}>
+                  {/* Domain Filter Pills */}
+                  <div className="pulse-domain-pills">
+                    <button
+                      type="button"
+                      className={`pulse-domain-btn ${researchDomain === 'all' ? 'active' : ''}`}
+                      onClick={() => setResearchDomain('all')}
+                    >
+                      All ({researchList.length})
+                    </button>
+                    <button
+                      type="button"
+                      className={`pulse-domain-btn ${researchDomain === 'healthcare' ? 'active-health' : ''}`}
+                      onClick={() => setResearchDomain('healthcare')}
+                    >
+                      <Activity size={12} color="var(--color-health)" /> HealthCare
+                    </button>
+                    <button
+                      type="button"
+                      className={`pulse-domain-btn ${researchDomain === 'infosec' ? 'active-sec' : ''}`}
+                      onClick={() => setResearchDomain('infosec')}
+                    >
+                      <ShieldCheck size={12} color="var(--color-sec)" /> InfoSec
+                    </button>
+                  </div>
+
+                  {/* Status Dropdown */}
+                  <select
+                    className="filter-select"
+                    value={researchStatus}
+                    onChange={(e) => setResearchStatus(e.target.value)}
+                    style={{ fontSize: '0.78rem', height: 34, padding: '0 0.65rem' }}
+                    aria-label="Filter by research status"
+                  >
+                    {RESEARCH_STATUSES.map(s => (
+                      <option key={s.id} value={s.id}>{s.label}</option>
+                    ))}
+                  </select>
+
+                  {/* Research Type Dropdown */}
+                  <select
+                    className="filter-select"
+                    value={researchType}
+                    onChange={(e) => setResearchType(e.target.value)}
+                    style={{ fontSize: '0.78rem', height: 34, padding: '0 0.65rem' }}
+                    aria-label="Filter by research type"
+                  >
+                    {RESEARCH_TYPES.map(t => (
+                      <option key={t.id} value={t.id}>{t.label}</option>
+                    ))}
+                  </select>
+
+                  {/* Associated Solution Dropdown */}
+                  <select
+                    className="filter-select"
+                    value={researchProjectId}
+                    onChange={(e) => setResearchProjectId(e.target.value)}
+                    style={{ fontSize: '0.78rem', height: 34, padding: '0 0.65rem' }}
+                    aria-label="Filter by associated project"
+                  >
+                    <option value="all">All Solutions</option>
+                    {list.map(p => (
+                      <option key={p.id} value={p.id}>{p.name}</option>
+                    ))}
+                  </select>
+
+                  {/* Reset Filters button */}
+                  {(researchDomain !== 'all' || researchStatus !== 'all' || researchType !== 'all' || researchProjectId !== 'all' || researchQuery) && (
+                    <button
+                      type="button"
+                      className="btn-ghost"
+                      onClick={() => {
+                        setResearchQuery('');
+                        setResearchDomain('all');
+                        setResearchStatus('all');
+                        setResearchType('all');
+                        setResearchProjectId('all');
+                      }}
+                      title="Reset all filters"
+                    >
+                      <RotateCcw size={12} /> Reset
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Main Content: Grid vs Table / List */}
+              {researchViewMode === 'grid' ? (
+                <div className="research-grid">
+                  {filteredResearchList.map(study => (
+                    <ResearchCard
+                      key={study.id}
+                      study={study}
+                      projects={projects}
+                      isAdmin={true}
+                      onOpenDetail={(id) => setPreviewResearchId(id)}
+                      onEdit={(id) => setEditingResearchId(id)}
+                      onDelete={(std) => setResearchToDelete(std)}
+                      onNavigateToProject={onPreviewProject}
+                    />
+                  ))}
+                </div>
+              ) : (
+                /* Executive Modern List Rows View */
+                <div className="research-list-container">
+                  {filteredResearchList.map(study => (
+                    <ResearchListRow
+                      key={study.id}
+                      study={study}
+                      projects={projects}
+                      isAdmin={true}
+                      onOpenDetail={(id) => setPreviewResearchId(id)}
+                      onEdit={(id) => setEditingResearchId(id)}
+                      onDelete={(std) => setResearchToDelete(std)}
+                      onNavigateToProject={onPreviewProject}
+                    />
+                  ))}
+                </div>
+              )}
+
+              {/* Empty State */}
+              {filteredResearchList.length === 0 && (
+                <div className="card" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '3rem 2rem', marginTop: '1rem' }}>
+                  <Lightbulb size={32} style={{ margin: '0 auto 0.75rem', opacity: 0.4, color: 'var(--primary)' }} />
+                  <h3 className="t-md" style={{ fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.35rem' }}>
+                    No research notes match your filters
+                  </h3>
+                  <p className="t-sm" style={{ color: 'var(--text-secondary)', maxWidth: 460, margin: '0 auto 1.25rem' }}>
+                    We couldn't find any tech spikes matching your current query or category selections.
+                  </p>
+                  <button
+                    type="button"
+                    className="btn-secondary"
+                    onClick={() => {
+                      setResearchQuery('');
+                      setResearchDomain('all');
+                      setResearchStatus('all');
+                      setResearchType('all');
+                      setResearchProjectId('all');
+                    }}
+                    style={{ margin: '0 auto', fontSize: '0.8rem' }}
+                  >
+                    Reset All Filters
+                  </button>
+                </div>
+              )}
+            </>
           ) : (
+            /* Inquiries View */
             <>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
                 <div>
@@ -295,7 +518,7 @@ export default function AdminView({ projects, onSaveProject, onDeleteProject, on
             </div>
             <div className="modal-body">
               <p className="t-sm" style={{ color: 'var(--text-secondary)', lineHeight: 1.55 }}>
-                Are you sure you want to delete <strong>{projectToDelete.name}</strong>? This will remove the project from both the Admin Portal and the client Showcase.
+                Are you sure you want to delete <strong>{projectToDelete.name}</strong>? This will remove the project and its associated collateral.
               </p>
             </div>
             <div className="modal-footer">
@@ -312,6 +535,73 @@ export default function AdminView({ projects, onSaveProject, onDeleteProject, on
             </div>
           </div>
         </div>
+      )}
+
+      {/* Confirmation modal for research deletion */}
+      {researchToDelete && (
+        <div className="modal-overlay" onClick={() => setResearchToDelete(null)} role="dialog" aria-modal="true" aria-label="Confirm study deletion">
+          <div className="modal" style={{ maxWidth: 460 }} onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3 className="t-md" style={{ fontWeight: 800 }}>Delete Research Study</h3>
+              <button className="modal-close" onClick={() => setResearchToDelete(null)} aria-label="Close dialog"><X size={16} /></button>
+            </div>
+            <div className="modal-body">
+              <p className="t-sm" style={{ color: 'var(--text-secondary)', lineHeight: 1.55 }}>
+                Are you sure you want to delete research study <strong>{researchToDelete.code}: {researchToDelete.title}</strong>?
+              </p>
+            </div>
+            <div className="modal-footer">
+              <button className="btn-secondary" onClick={() => setResearchToDelete(null)}>Cancel</button>
+              <button
+                className="btn-danger"
+                onClick={() => {
+                  if (onDeleteResearch) onDeleteResearch(researchToDelete.id);
+                  setResearchToDelete(null);
+                }}
+              >
+                Delete Study
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Creating Research Modal */}
+      {isCreatingResearch && (
+        <EditResearchModal
+          study={createDefaultResearch()}
+          projects={projects}
+          isNew={true}
+          onClose={() => setIsCreatingResearch(false)}
+          onSave={(std) => {
+            if (onSaveResearch) onSaveResearch(std, true);
+            setIsCreatingResearch(false);
+          }}
+        />
+      )}
+
+      {/* Editing Research Modal */}
+      {editingResearch && (
+        <EditResearchModal
+          study={editingResearch}
+          projects={projects}
+          isNew={false}
+          onClose={() => setEditingResearchId(null)}
+          onSave={(std) => {
+            if (onSaveResearch) onSaveResearch(std, false);
+            setEditingResearchId(null);
+          }}
+        />
+      )}
+
+      {/* Previewing Research Modal */}
+      {previewResearch && (
+        <ResearchDetailModal
+          study={previewResearch}
+          projects={projects}
+          onClose={() => setPreviewResearchId(null)}
+          onNavigateToProject={onPreviewProject}
+        />
       )}
     </div>
   );

@@ -2,11 +2,12 @@ import React, { useRef, useState } from 'react';
 import {
   ArrowLeft, Info, MonitorPlay, ImageIcon, Settings, Play, Trash2, Upload,
   CheckCircle, Plus, X, MessageSquareQuote, Milestone, ChevronLeft, ChevronRight,
-  Server, Cloud, ExternalLink, Sparkles, Globe, Laptop
+  Server, Cloud, Sparkles, FileText, Presentation, Folder, PauseCircle
 } from 'lucide-react';
 
 const TABS = [
-  { id: 'info', label: 'Project Info', icon: Info },
+  { id: 'info', label: 'Project Info & Lifecycle', icon: Info },
+  { id: 'collateral', label: 'Collateral & Documents', icon: FileText },
   { id: 'deployments', label: 'Deployments & Versions', icon: Server },
   { id: 'demo', label: 'Demo Mode', icon: MonitorPlay },
   { id: 'media', label: 'Media', icon: ImageIcon },
@@ -87,6 +88,52 @@ export default function EditProjectView({ project, isNew = false, onCancel, onSa
   const [progress, setProgress] = useState(null); // 0–100 while "uploading"
   const fileInputRef = useRef(null);
   const thumbnailInputRef = useRef(null);
+  const [newPpt, setNewPpt] = useState({ title: '', type: 'Client Pitch Deck', format: 'PPTX', url: '', notes: '' });
+  const [newSp, setNewSp] = useState({ title: '', category: 'PRDs & Specs', url: '', notes: '' });
+  const [newDoc, setNewDoc] = useState({ title: '', type: 'Figma', url: '', notes: '' });
+
+  const addPpt = () => {
+    if (!newPpt.title?.trim() || !newPpt.url?.trim()) return;
+    const current = draft.collateral?.presentations || [];
+    const item = {
+      ...newPpt,
+      id: `ppt-${Date.now()}`,
+      lastModified: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+    };
+    setField('collateral.presentations', [...current, item]);
+    setNewPpt({ title: '', type: 'Client Pitch Deck', format: 'PPTX', url: '', notes: '' });
+  };
+
+  const removePpt = (idx) => {
+    const current = draft.collateral?.presentations || [];
+    setField('collateral.presentations', current.filter((_, i) => i !== idx));
+  };
+
+  const addSp = () => {
+    if (!newSp.title?.trim() || !newSp.url?.trim()) return;
+    const current = draft.collateral?.sharepoint || [];
+    const item = { ...newSp, id: `sp-${Date.now()}` };
+    setField('collateral.sharepoint', [...current, item]);
+    setNewSp({ title: '', category: 'PRDs & Specs', url: '', notes: '' });
+  };
+
+  const removeSp = (idx) => {
+    const current = draft.collateral?.sharepoint || [];
+    setField('collateral.sharepoint', current.filter((_, i) => i !== idx));
+  };
+
+  const addDoc = () => {
+    if (!newDoc.title?.trim() || !newDoc.url?.trim()) return;
+    const current = draft.collateral?.designAndDocs || [];
+    const item = { ...newDoc, id: `doc-${Date.now()}` };
+    setField('collateral.designAndDocs', [...current, item]);
+    setNewDoc({ title: '', type: 'Figma', url: '', notes: '' });
+  };
+
+  const removeDoc = (idx) => {
+    const current = draft.collateral?.designAndDocs || [];
+    setField('collateral.designAndDocs', current.filter((_, i) => i !== idx));
+  };
 
   const addVersion = () => {
     const currentVers = Array.isArray(draft.versions) ? draft.versions : [];
@@ -503,6 +550,83 @@ export default function EditProjectView({ project, isNew = false, onCancel, onSa
             </div>
           </div>
 
+          {/* Operational Lifecycle & Governance */}
+          <div className="t-label" style={{ marginTop: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <PauseCircle size={14} color="var(--primary)" />
+            <span>Operational Lifecycle & Governance</span>
+          </div>
+          <div className="form-grid">
+            <div className="form-field">
+              <label>Lifecycle Status</label>
+              <select
+                value={draft.lifecycle?.status || 'active'}
+                onChange={(e) => setField('lifecycle.status', e.target.value)}
+              >
+                <option value="active">🟢 Active Development (Live Sprints)</option>
+                <option value="on-hold">🟡 On-Hold / Paused (Temporarily Parked)</option>
+                <option value="maintenance">🔵 Production / Maintenance (Stable Live)</option>
+                <option value="incubation">🟣 Incubation / PoC (Early Prototype)</option>
+                <option value="archived">⚪ Archived / Sunset (Historical Reference)</option>
+              </select>
+            </div>
+            <div className="form-field">
+              <label>Revival Readiness</label>
+              <select
+                value={draft.lifecycle?.revivalReadiness || 'Production Ready'}
+                onChange={(e) => setField('lifecycle.revivalReadiness', e.target.value)}
+              >
+                <option value="Production Ready">Production Ready</option>
+                <option value="High — Fully Validated">High — Fully Validated</option>
+                <option value="Medium — Needs Dependency Refresh">Medium — Needs Dependency Refresh</option>
+                <option value="Low — Architectural Prototype">Low — Architectural Prototype</option>
+              </select>
+            </div>
+            <div className="form-field">
+              <label>Last Active Date</label>
+              <input
+                placeholder="e.g. Sep 2026 or May 2026"
+                value={draft.lifecycle?.lastActiveDate || ''}
+                onChange={(e) => setField('lifecycle.lastActiveDate', e.target.value)}
+              />
+            </div>
+            <div className="form-field">
+              <label>Data Access Level</label>
+              <input
+                placeholder="e.g. Internal Org SSO Required"
+                value={draft.collateral?.governance?.accessLevel || 'Internal Org SSO Required'}
+                onChange={(e) => setField('collateral.governance.accessLevel', e.target.value)}
+              />
+            </div>
+            <div className="form-field span-2">
+              <label>Status Note / Paused Reason (Shown on Card)</label>
+              <textarea
+                placeholder="e.g. Core algorithm verified; pilot paused pending hospital facility renovation schedule..."
+                value={draft.lifecycle?.statusNote || ''}
+                onChange={(e) => setField('lifecycle.statusNote', e.target.value)}
+                style={{ minHeight: '55px' }}
+              />
+            </div>
+            <div className="form-field">
+              <label>Product Owner / Clinical Lead</label>
+              <input
+                placeholder="e.g. Dr. Sarah Lin (Clinical Director)"
+                value={draft.collateral?.governance?.productOwner || draft.lifecycle?.owner || ''}
+                onChange={(e) => {
+                  setField('collateral.governance.productOwner', e.target.value);
+                  setField('lifecycle.owner', e.target.value);
+                }}
+              />
+            </div>
+            <div className="form-field">
+              <label>Technical Lead / Architect</label>
+              <input
+                placeholder="e.g. Alex Mercer (Principal Architect)"
+                value={draft.collateral?.governance?.techLead || ''}
+                onChange={(e) => setField('collateral.governance.techLead', e.target.value)}
+              />
+            </div>
+          </div>
+
           <div className="form-field" style={{ marginTop: '0.5rem' }}>
             <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
               <MessageSquareQuote size={14} /> Presenter talk track (internal notes)
@@ -513,6 +637,296 @@ export default function EditProjectView({ project, isNew = false, onCancel, onSa
               onChange={(e) => setField('talkTrack', e.target.value)}
               style={{ minHeight: '65px' }}
             />
+          </div>
+        </div>
+      )}
+
+      {/* ===== Project Collateral & Docs Tab ===== */}
+      {tab === 'collateral' && (
+        <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          <div>
+            <h3 className="t-md" style={{ fontWeight: 800 }}>Project Collateral & Documents</h3>
+            <p className="t-sm" style={{ color: 'var(--text-secondary)', marginTop: '0.2rem' }}>
+              Manage official presentation decks, SharePoint directories, design canvases, and demo recordings for <strong>{draft.name || 'this project'}</strong>.
+            </p>
+          </div>
+
+          {/* Section 1: Presentation Decks */}
+          <div className="card" style={{ padding: '1.25rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.9rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Presentation size={16} color="var(--color-rose, #f43f5e)" />
+                <span className="t-sm" style={{ fontWeight: 800 }}>Presentations & Pitch Decks ({draft.collateral?.presentations?.length || 0})</span>
+              </div>
+            </div>
+
+            {/* Existing PPTs List */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', marginBottom: '1.2rem' }}>
+              {(draft.collateral?.presentations || []).map((ppt, pIdx) => (
+                <div key={ppt.id || pIdx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem', padding: '0.65rem 0.9rem', background: 'var(--bg-subtle)', borderRadius: 'var(--radius-sm)' }}>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <span className="t-sm" style={{ fontWeight: 700 }}>{ppt.title}</span>
+                      <span className="badge badge-rose" style={{ fontSize: '0.66rem' }}>{ppt.type}</span>
+                      <span className="format-pill">{ppt.format}</span>
+                    </div>
+                    {ppt.notes && <div className="t-xs" style={{ color: 'var(--text-secondary)', marginTop: '0.2rem' }}>{ppt.notes}</div>}
+                    <div className="t-xs font-mono" style={{ color: 'var(--text-muted)', marginTop: '0.2rem' }}>{ppt.url}</div>
+                  </div>
+                  <button
+                    type="button"
+                    className="btn-ghost"
+                    onClick={() => removePpt(pIdx)}
+                    style={{ color: 'var(--color-rose)', padding: '0.3rem' }}
+                    title="Remove presentation"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              ))}
+              {(!draft.collateral?.presentations || draft.collateral.presentations.length === 0) && (
+                <div className="t-xs" style={{ color: 'var(--text-muted)', fontStyle: 'italic', padding: '0.5rem 0' }}>
+                  No presentations registered yet. Add one below.
+                </div>
+              )}
+            </div>
+
+            {/* Add New PPT Sub-form */}
+            <div style={{ background: 'rgba(99, 102, 241, 0.04)', padding: '0.9rem', borderRadius: 'var(--radius-sm)', border: '1px dashed var(--border-light)' }}>
+              <div className="t-xs" style={{ fontWeight: 700, marginBottom: '0.5rem' }}>+ Register New Presentation Deck</div>
+              <div className="form-grid" style={{ marginBottom: '0.6rem' }}>
+                <div className="form-field">
+                  <label>Deck Title *</label>
+                  <input
+                    placeholder="e.g. Executive Client Pitch Deck"
+                    value={newPpt.title}
+                    onChange={(e) => setNewPpt(p => ({ ...p, title: e.target.value }))}
+                  />
+                </div>
+                <div className="form-field">
+                  <label>Presentation Type</label>
+                  <select
+                    value={newPpt.type}
+                    onChange={(e) => setNewPpt(p => ({ ...p, type: e.target.value }))}
+                  >
+                    <option value="Client Pitch Deck">Client Pitch Deck</option>
+                    <option value="Technical Deep Dive">Technical Deep Dive</option>
+                    <option value="Architecture Overview">Architecture Overview</option>
+                    <option value="Sales Brief">Sales Brief</option>
+                  </select>
+                </div>
+                <div className="form-field span-2">
+                  <label>SharePoint / PowerPoint Web URL *</label>
+                  <input
+                    placeholder="https://company.sharepoint.com/:p:/r/.../deck.pptx"
+                    value={newPpt.url}
+                    onChange={(e) => setNewPpt(p => ({ ...p, url: e.target.value }))}
+                  />
+                </div>
+                <div className="form-field span-2">
+                  <label>Description / Notes</label>
+                  <input
+                    placeholder="e.g. 14-slide executive presentation covering intake UX and clinical flow"
+                    value={newPpt.notes}
+                    onChange={(e) => setNewPpt(p => ({ ...p, notes: e.target.value }))}
+                  />
+                </div>
+              </div>
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={addPpt}
+                disabled={!newPpt.title?.trim() || !newPpt.url?.trim()}
+                style={{ fontSize: '0.78rem', padding: '0.35rem 0.75rem' }}
+              >
+                <Plus size={13} /> Add Presentation to Collateral
+              </button>
+            </div>
+          </div>
+
+          {/* Section 2: SharePoint Directories */}
+          <div className="card" style={{ padding: '1.25rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.9rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Folder size={16} color="var(--primary)" />
+                <span className="t-sm" style={{ fontWeight: 800 }}>SharePoint & Cloud Repositories ({draft.collateral?.sharepoint?.length || 0})</span>
+              </div>
+            </div>
+
+            {/* Existing SharePoint List */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', marginBottom: '1.2rem' }}>
+              {(draft.collateral?.sharepoint || []).map((sp, sIdx) => (
+                <div key={sp.id || sIdx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem', padding: '0.65rem 0.9rem', background: 'var(--bg-subtle)', borderRadius: 'var(--radius-sm)' }}>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <span className="t-sm" style={{ fontWeight: 700 }}>{sp.title}</span>
+                      <span className="badge badge-brand" style={{ fontSize: '0.66rem' }}>{sp.category}</span>
+                    </div>
+                    {sp.notes && <div className="t-xs" style={{ color: 'var(--text-secondary)', marginTop: '0.2rem' }}>{sp.notes}</div>}
+                    <div className="t-xs font-mono" style={{ color: 'var(--text-muted)', marginTop: '0.2rem' }}>{sp.url}</div>
+                  </div>
+                  <button
+                    type="button"
+                    className="btn-ghost"
+                    onClick={() => removeSp(sIdx)}
+                    style={{ color: 'var(--color-rose)', padding: '0.3rem' }}
+                    title="Remove SharePoint link"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              ))}
+              {(!draft.collateral?.sharepoint || draft.collateral.sharepoint.length === 0) && (
+                <div className="t-xs" style={{ color: 'var(--text-muted)', fontStyle: 'italic', padding: '0.5rem 0' }}>
+                  No SharePoint folders registered yet. Add one below.
+                </div>
+              )}
+            </div>
+
+            {/* Add New SharePoint Sub-form */}
+            <div style={{ background: 'rgba(99, 102, 241, 0.04)', padding: '0.9rem', borderRadius: 'var(--radius-sm)', border: '1px dashed var(--border-light)' }}>
+              <div className="t-xs" style={{ fontWeight: 700, marginBottom: '0.5rem' }}>+ Register SharePoint Directory</div>
+              <div className="form-grid" style={{ marginBottom: '0.6rem' }}>
+                <div className="form-field">
+                  <label>Folder / Document Title *</label>
+                  <input
+                    placeholder="e.g. Official Project Workspace Root"
+                    value={newSp.title}
+                    onChange={(e) => setNewSp(s => ({ ...s, title: e.target.value }))}
+                  />
+                </div>
+                <div className="form-field">
+                  <label>Category</label>
+                  <select
+                    value={newSp.category}
+                    onChange={(e) => setNewSp(s => ({ ...s, category: e.target.value }))}
+                  >
+                    <option value="Project Root">Project Root</option>
+                    <option value="PRDs & Specs">PRDs & Specs</option>
+                    <option value="Architecture">Architecture</option>
+                    <option value="Compliance & Legal">Compliance & Legal</option>
+                    <option value="Sprint Deliverables">Sprint Deliverables</option>
+                  </select>
+                </div>
+                <div className="form-field span-2">
+                  <label>SharePoint URL *</label>
+                  <input
+                    placeholder="https://company.sharepoint.com/sites/..."
+                    value={newSp.url}
+                    onChange={(e) => setNewSp(s => ({ ...s, url: e.target.value }))}
+                  />
+                </div>
+                <div className="form-field span-2">
+                  <label>Description / Notes</label>
+                  <input
+                    placeholder="e.g. Master collaboration drive for clinical engineering documents"
+                    value={newSp.notes}
+                    onChange={(e) => setNewSp(s => ({ ...s, notes: e.target.value }))}
+                  />
+                </div>
+              </div>
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={addSp}
+                disabled={!newSp.title?.trim() || !newSp.url?.trim()}
+                style={{ fontSize: '0.78rem', padding: '0.35rem 0.75rem' }}
+              >
+                <Plus size={13} /> Add SharePoint Link to Collateral
+              </button>
+            </div>
+          </div>
+
+          {/* Section 3: Technical Design, Architecture & API Specs */}
+          <div className="card" style={{ padding: '1.25rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.9rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <FileText size={16} color="var(--color-sec, #818cf8)" />
+                <span className="t-sm" style={{ fontWeight: 800 }}>Design Systems & API Contracts ({draft.collateral?.designAndDocs?.length || 0})</span>
+              </div>
+            </div>
+
+            {/* Existing Docs List */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', marginBottom: '1.2rem' }}>
+              {(draft.collateral?.designAndDocs || []).map((doc, dIdx) => (
+                <div key={doc.id || dIdx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem', padding: '0.65rem 0.9rem', background: 'var(--bg-subtle)', borderRadius: 'var(--radius-sm)' }}>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <span className="t-sm" style={{ fontWeight: 700 }}>{doc.title}</span>
+                      <span className="badge badge-sec" style={{ fontSize: '0.66rem' }}>{doc.type}</span>
+                    </div>
+                    {doc.notes && <div className="t-xs" style={{ color: 'var(--text-secondary)', marginTop: '0.2rem' }}>{doc.notes}</div>}
+                    <div className="t-xs font-mono" style={{ color: 'var(--text-muted)', marginTop: '0.2rem' }}>{doc.url}</div>
+                  </div>
+                  <button
+                    type="button"
+                    className="btn-ghost"
+                    onClick={() => removeDoc(dIdx)}
+                    style={{ color: 'var(--color-rose)', padding: '0.3rem' }}
+                    title="Remove documentation link"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              ))}
+              {(!draft.collateral?.designAndDocs || draft.collateral.designAndDocs.length === 0) && (
+                <div className="t-xs" style={{ color: 'var(--text-muted)', fontStyle: 'italic', padding: '0.5rem 0' }}>
+                  No design or API specifications registered yet.
+                </div>
+              )}
+            </div>
+
+            {/* Add New Doc Sub-form */}
+            <div style={{ background: 'rgba(99, 102, 241, 0.04)', padding: '0.9rem', borderRadius: 'var(--radius-sm)', border: '1px dashed var(--border-light)' }}>
+              <div className="t-xs" style={{ fontWeight: 700, marginBottom: '0.5rem' }}>+ Register Design / API Specification</div>
+              <div className="form-grid" style={{ marginBottom: '0.6rem' }}>
+                <div className="form-field">
+                  <label>Document / System Title *</label>
+                  <input
+                    placeholder="e.g. Figma Clinical Design System"
+                    value={newDoc.title}
+                    onChange={(e) => setNewDoc(d => ({ ...d, title: e.target.value }))}
+                  />
+                </div>
+                <div className="form-field">
+                  <label>Resource Type</label>
+                  <select
+                    value={newDoc.type}
+                    onChange={(e) => setNewDoc(d => ({ ...d, type: e.target.value }))}
+                  >
+                    <option value="Figma">Figma Board</option>
+                    <option value="API Docs">OpenAPI / Swagger Spec</option>
+                    <option value="Draw.io">System Architecture Schema</option>
+                    <option value="Wiki">Technical Wiki / Confluence</option>
+                  </select>
+                </div>
+                <div className="form-field span-2">
+                  <label>URL *</label>
+                  <input
+                    placeholder="https://www.figma.com/file/... or http://localhost:.../docs"
+                    value={newDoc.url}
+                    onChange={(e) => setNewDoc(d => ({ ...d, url: e.target.value }))}
+                  />
+                </div>
+                <div className="form-field span-2">
+                  <label>Description / Notes</label>
+                  <input
+                    placeholder="e.g. Doctor review interface wireframes and patient mobile QR screens"
+                    value={newDoc.notes}
+                    onChange={(e) => setNewDoc(d => ({ ...d, notes: e.target.value }))}
+                  />
+                </div>
+              </div>
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={addDoc}
+                disabled={!newDoc.title?.trim() || !newDoc.url?.trim()}
+                style={{ fontSize: '0.78rem', padding: '0.35rem 0.75rem' }}
+              >
+                <Plus size={13} /> Add Design / API Spec to Collateral
+              </button>
+            </div>
           </div>
         </div>
       )}
