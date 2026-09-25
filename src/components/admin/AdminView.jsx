@@ -3,7 +3,7 @@ import {
   FolderKanban, Inbox, Pencil, Sparkles, Play, Calendar, Plus, Trash2, X,
   ChevronLeft, ChevronRight, ImageIcon, Eye, Mail, Activity, ShieldCheck,
   TrendingUp, CheckCircle2, Server, LayoutGrid, List, Lightbulb, BookOpen,
-  PauseCircle, FileText, Search, Clock, Layers, Presentation, ExternalLink,
+  PauseCircle, FileText, Search, Clock, Presentation, ExternalLink,
   Code2, Tag, ArrowUpRight, RotateCcw
 } from 'lucide-react';
 import EditProjectView from './EditProjectView';
@@ -100,24 +100,7 @@ export default function AdminView({
   return (
     <div className="admin-shell">
       <aside className={`admin-sidebar ${isSidebarCollapsed ? 'collapsed' : ''}`} aria-label="Admin navigation">
-        <div className="navbar-brand" style={{
-          padding: isSidebarCollapsed ? '0 0 0.75rem' : '0 0.5rem 0.75rem',
-          justifyContent: isSidebarCollapsed ? 'center' : 'flex-start'
-        }}>
-          <div style={{
-            width: 30, height: 30, borderRadius: 'var(--radius-sm)', flexShrink: 0,
-            background: 'linear-gradient(135deg, #6366f1, #4f46e5)', color: '#fff',
-            display: 'flex', alignItems: 'center', justifyContent: 'center'
-          }}>
-            <Layers size={16} />
-          </div>
-          {!isSidebarCollapsed && (
-            <div>
-              <div className="t-sm" style={{ fontWeight: 800 }}>Enterprise Hub</div>
-              <div className="t-xs" style={{ color: 'var(--text-muted)' }}>Admin Console</div>
-            </div>
-          )}
-        </div>
+
 
         {NAV.map(n => (
           <button
