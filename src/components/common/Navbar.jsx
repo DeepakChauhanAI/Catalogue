@@ -23,7 +23,7 @@ export default function Navbar({
         className="navbar-brand-btn"
         title="Return to Homepage / Landing Page"
       >
-        <BrandLogo size={24} />
+        <BrandLogo size="navbar" />
         <div style={{ textAlign: 'left' }}>
           <div className="t-sm" style={{ fontWeight: 800, lineHeight: 1.2 }}>Enterprise Hub</div>
           <div className="t-xs" style={{ color: 'var(--text-muted)' }}>

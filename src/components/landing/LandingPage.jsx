@@ -13,8 +13,8 @@ export default function LandingPage({
       {/* Hero Section */}
       <section className="landing-hero" style={{ flex: 1, justifyContent: 'center', padding: '4.5rem 1.75rem 3.5rem' }}>
         {/* Brand Emblem */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem' }}>
-          <BrandLogo size={64} />
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '2rem' }}>
+          <BrandLogo size="hero" className="landing-hero-brand-logo" />
         </div>
 
         <div className="landing-hero-badge-row">

@@ -2510,6 +2510,20 @@ button { font-family: inherit; border: none; background: none; cursor: pointer; 
   align-items: center;
 }
 
+.landing-hero-brand-logo {
+  cursor: pointer;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), filter 0.35s ease;
+}
+.landing-hero-brand-logo:hover {
+  transform: translateY(-4px) scale(1.04);
+}
+@media (max-width: 640px) {
+  .landing-hero-brand-logo {
+    width: 88px !important;
+    height: 88px !important;
+  }
+}
+
 .landing-hero-badge-row {
   display: flex;
   align-items: center;
