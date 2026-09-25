@@ -218,12 +218,12 @@ export function createDefaultResearch() {
   const now = new Date();
   const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   const formattedDate = `${monthNames[now.getMonth()]} ${now.getFullYear()}`;
-  const id = `spike-${Date.now()}`;
+  const id = `res-${Date.now()}`;
   const codeNum = String(Date.now()).slice(-4);
 
   return {
     id,
-    code: `SPIKE-${codeNum}`,
+    code: `RES-${codeNum}`,
     title: '',
     projectId: '',
     projectName: '',
@@ -252,7 +252,7 @@ export function createDefaultResearch() {
       whitepaperUrl: ''
     },
     relatedProjects: [],
-    tags: ['Tech Spike', 'Internal Research']
+    tags: ['Technology Evaluation', 'Internal Research']
   };
 }
 

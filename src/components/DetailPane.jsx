@@ -1008,18 +1008,18 @@ export default function DetailPane({
             </div>
           </div>
 
-          {/* Section 6: Internal Project Research & Tech Spikes (Admin / Inter-Enterprise Only) */}
+          {/* Section 6: Internal Project Research & Technical Studies (Admin / Inter-Enterprise Only) */}
           {isPreviewFromAdmin && relatedResearches.length > 0 && (
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
                 <Lightbulb size={17} color="var(--primary)" />
-                <h3 className="t-md" style={{ fontWeight: 800 }}>Internal Research, Tech Spikes & Evaluations</h3>
+                <h3 className="t-md" style={{ fontWeight: 800 }}>Internal Research & Technical Studies</h3>
                 <span className="badge badge-brand" style={{ fontSize: '0.7rem' }}>
                   {relatedResearches.length} Documented
                 </span>
               </div>
               <p className="t-xs" style={{ color: 'var(--text-secondary)', marginBottom: '0.85rem' }}>
-                Technology evaluations, feasibility spikes, and user research conducted specifically for <strong>{product.name}</strong>.
+                Technology evaluations, feasibility studies, and user research conducted specifically for <strong>{product.name}</strong>.
               </p>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
@@ -1031,7 +1031,7 @@ export default function DetailPane({
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                           <span className="badge badge-brand font-mono" style={{ fontSize: '0.72rem' }}>{res.code}</span>
                           <span className={`badge ${isCompleted ? 'badge-health' : 'badge-amber'}`} style={{ fontSize: '0.72rem' }}>
-                            {isCompleted ? 'Adopted in Project' : 'Active Spike'}
+                            {isCompleted ? 'Adopted in Project' : 'In Progress'}
                           </span>
                         </div>
                         <span className="t-xs" style={{ color: 'var(--text-muted)' }}>{res.date}</span>
@@ -1083,7 +1083,7 @@ export default function DetailPane({
                               style={{ fontSize: '0.75rem', padding: '0.3rem 0.65rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
                               onClick={() => onNavigateToResearch(res.id)}
                             >
-                              <span>View Spike Brief</span>
+                              <span>View Study Brief</span>
                               <ArrowRight size={11} />
                             </button>
                           )}

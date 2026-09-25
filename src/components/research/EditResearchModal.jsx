@@ -120,7 +120,7 @@ export default function EditResearchModal({
       return;
     }
     if (!draft.code?.trim()) {
-      setError('Note Code is required (e.g. SPIKE-01)');
+      setError('Study Code is required (e.g. RES-01)');
       return;
     }
     if (!draft.context?.trim() && !draft.abstract?.trim()) {
@@ -202,10 +202,10 @@ export default function EditResearchModal({
             </span>
             <div>
               <h2 className="t-lg" style={{ fontWeight: 800 }}>
-                {isNew ? 'New Project Research Note / Spike' : `Edit Research: ${draft.code}`}
+                {isNew ? 'New Project Research Study' : `Edit Research: ${draft.code}`}
               </h2>
               <p className="t-xs" style={{ color: 'var(--text-muted)' }}>
-                Track tech evaluations, architecture spikes, user discovery, and decisions for specific projects
+                Track technology evaluations, architecture reviews, user research, and project decisions
               </p>
             </div>
           </div>
@@ -261,12 +261,12 @@ export default function EditResearchModal({
           {/* Row 1: Code, Project & Status */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', marginBottom: '1.25rem' }}>
             <div className="form-field">
-              <label className="form-label">Note Code <span style={{ color: 'var(--color-rose)' }}>*</span></label>
+              <label className="form-label">Study Code <span style={{ color: 'var(--color-rose)' }}>*</span></label>
               <input
                 className="form-input font-mono"
                 value={draft.code || ''}
                 onChange={(e) => handleFieldChange('code', e.target.value)}
-                placeholder="e.g. SPIKE-01"
+                placeholder="e.g. RES-01"
                 required
               />
               <span className="form-hint">Unique identifier for tracking</span>
@@ -286,7 +286,7 @@ export default function EditResearchModal({
                   <option key={p.id} value={p.id}>Project: {p.name}</option>
                 ))}
               </select>
-              <span className="form-hint">Leave blank if this spike is independent or not project-specific</span>
+              <span className="form-hint">Leave blank if this study is independent or not project-specific</span>
             </div>
 
             <div className="form-field">
@@ -297,8 +297,8 @@ export default function EditResearchModal({
                 onChange={(e) => handleFieldChange('status', e.target.value)}
               >
                 <option value="completed">Completed & Adopted</option>
-                <option value="in-progress">Active Spike / In-Progress</option>
-                <option value="evaluated">Explored / Inactive</option>
+                <option value="in-progress">In Progress</option>
+                <option value="evaluated">Concluded Study</option>
               </select>
               <span className="form-hint">Current adoption or evaluation state</span>
             </div>
@@ -381,7 +381,7 @@ export default function EditResearchModal({
               rows={3}
               value={draft.context || draft.abstract || ''}
               onChange={(e) => handleFieldChange('context', e.target.value)}
-              placeholder="Explain the background problem, technology question, or spike rationale..."
+              placeholder="Explain the background problem, technology question, or evaluation rationale..."
               required
               style={{ minHeight: '90px' }}
             />

@@ -58,11 +58,11 @@ export default function ResearchView({
       <div className="showcase-header">
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-            <h1 className="t-hero" style={{ fontWeight: 900 }}>Project Research & Discovery</h1>
-            <span className="badge badge-brand" style={{ fontSize: '0.72rem' }}>Spikes & Evaluations</span>
+            <h1 className="t-hero" style={{ fontWeight: 900 }}>Project Research & Studies</h1>
+            <span className="badge badge-brand" style={{ fontSize: '0.72rem' }}>Studies & Evaluations</span>
           </div>
           <p className="t-sm" style={{ color: 'var(--text-secondary)', marginTop: '0.3rem' }}>
-            Internal tech evaluations, competitor analyses, feasibility spikes, and user discovery conducted for organizational projects
+            Internal technology evaluations, competitor analyses, feasibility studies, and user research conducted for organizational projects
           </p>
         </div>
 
@@ -73,7 +73,7 @@ export default function ResearchView({
               ref={searchRef}
               className="search-input"
               style={{ paddingLeft: '2rem', minWidth: 260 }}
-              placeholder="Search research notes, spikes, decisions… (Ctrl+K)"
+              placeholder="Search research notes, studies, evaluations… (Ctrl+K)"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
@@ -153,7 +153,7 @@ export default function ResearchView({
           </div>
           <div className="pulse-stat-item">
             <Clock size={13} color="var(--color-amber, #f59e0b)" />
-            <span>Active Spikes: <strong>{inProgressCount}</strong></span>
+            <span>In Progress: <strong>{inProgressCount}</strong></span>
           </div>
           <div className="pulse-stat-item">
             <Layers size={13} color="var(--color-sec, #818cf8)" />

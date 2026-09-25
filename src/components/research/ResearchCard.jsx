@@ -465,7 +465,7 @@ export default function ResearchCard({
 
           <span
             className={`status-pill-v2 ${isCompleted ? 'completed' : isInProgress ? 'in-progress' : 'evaluated'}`}
-            title={isCompleted ? 'Adopted in Project' : isInProgress ? 'Active Spike' : 'Explored / Inactive'}
+            title={isCompleted ? 'Adopted in Project' : isInProgress ? 'In Progress' : 'Concluded Study'}
           >
             {isCompleted ? (
               <>
@@ -475,10 +475,10 @@ export default function ResearchCard({
             ) : isInProgress ? (
               <>
                 <span className="status-live-pulse-dot" />
-                <span>Active Spike</span>
+                <span>In Progress</span>
               </>
             ) : (
-              <span>Explored</span>
+              <span>Concluded</span>
             )}
           </span>
         </div>

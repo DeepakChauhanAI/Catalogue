@@ -24,7 +24,7 @@ export const DELIVERABLE_CATEGORIES = [
 export const DELIVERABLE_PRESETS = [
   { title: 'Slide Deck (PPT)', type: 'presentation', notes: 'Internal presentation & executive summary' },
   { title: 'SharePoint Notes Folder', type: 'folder', notes: 'Working notes, logs, and spreadsheets' },
-  { title: 'PoC Prototype Sandbox', type: 'code', notes: 'Spike implementation sandbox & repo' },
+  { title: 'PoC Prototype Sandbox', type: 'code', notes: 'Prototype sandbox & repo' },
   { title: 'Architecture ADR / Spec', type: 'document', notes: 'Architecture decision record & spec' },
   { title: 'Figma UI Canvas', type: 'design', notes: 'Interactive design mockup & user flow' },
   { title: 'Benchmark Dataset', type: 'data', notes: 'Evaluation benchmarks & latency metrics' }

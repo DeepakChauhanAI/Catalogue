@@ -147,10 +147,10 @@ export default function ResearchListRow({
             ) : isInProgress ? (
               <>
                 <span className="status-live-pulse-dot" />
-                <span>Active Spike</span>
+                <span>In Progress</span>
               </>
             ) : (
-              <span>Explored / Inactive</span>
+              <span>Concluded</span>
             )}
           </span>
 

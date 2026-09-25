@@ -19,7 +19,7 @@ import { DeliverableIcon, getDeliverableClass } from '../research/deliverableUti
 
 const NAV = [
   { id: 'projects', label: 'Solutions & Projects', icon: FolderKanban },
-  { id: 'research', label: 'Project Research & Spikes', icon: Lightbulb },
+  { id: 'research', label: 'Project Research & Studies', icon: Lightbulb },
   { id: 'inquiries', label: 'Demo Requests', icon: Inbox }
 ];
 
@@ -223,9 +223,9 @@ export default function AdminView({
               {/* Header */}
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
                 <div>
-                  <h1 className="t-xl" style={{ fontWeight: 900, marginBottom: '0.3rem' }}>Project Research & Tech Spikes</h1>
+                  <h1 className="t-xl" style={{ fontWeight: 900, marginBottom: '0.3rem' }}>Project Research & Studies</h1>
                   <p className="t-sm" style={{ color: 'var(--text-secondary)' }}>
-                    Manage internal tech evaluations, competitor analyses, architecture spikes, and project outcomes
+                    Manage internal technology evaluations, competitor analyses, feasibility studies, and project outcomes
                   </p>
                 </div>
                 <button
@@ -234,7 +234,7 @@ export default function AdminView({
                   onClick={() => setIsCreatingResearch(true)}
                   style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}
                 >
-                  <Plus size={15} /> Add Research Note
+                  <Plus size={15} /> Add Research Study
                 </button>
               </div>
 
@@ -247,7 +247,7 @@ export default function AdminView({
                     <Search size={14} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
                     <input
                       className="search-input"
-                      placeholder="Search notes, spikes, decisions... (Ctrl+K)"
+                      placeholder="Search notes, evaluations, studies... (Ctrl+K)"
                       value={researchQuery}
                       onChange={(e) => setResearchQuery(e.target.value)}
                       aria-label="Search research notes"
@@ -417,7 +417,7 @@ export default function AdminView({
                     No research notes match your filters
                   </h3>
                   <p className="t-sm" style={{ color: 'var(--text-secondary)', maxWidth: 460, margin: '0 auto 1.25rem' }}>
-                    We couldn't find any tech spikes matching your current query or category selections.
+                    We couldn't find any research studies matching your current query or category selections.
                   </p>
                   <button
                     type="button"

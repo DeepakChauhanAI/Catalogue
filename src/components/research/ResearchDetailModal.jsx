@@ -27,7 +27,7 @@ export default function ResearchDetailModal({
   const isInProgress = study.status === 'in-progress';
 
   const typeConfig = RESEARCH_TYPES.find(t => t.id === study.type);
-  const typeLabel = typeConfig ? typeConfig.label : (study.type || 'Tech Spike');
+  const typeLabel = typeConfig ? typeConfig.label : (study.type || 'Research Study');
 
   const targetProjectId = study.projectId || study.relatedProjects?.[0];
   const relatedProject = targetProjectId ? projects[targetProjectId] : null;
@@ -98,7 +98,7 @@ export default function ResearchDetailModal({
             </span>
             <span className={`badge ${isCompleted ? 'badge-health' : isInProgress ? 'badge-amber' : 'badge-neutral'}`}>
               <span className={`lifecycle-dot ${isCompleted ? 'active' : isInProgress ? 'on-hold' : 'slate'}`} style={{ width: 6, height: 6 }} />
-              <span>{isCompleted ? 'Adopted in Project' : isInProgress ? 'Active Spike' : 'Explored / Inactive'}</span>
+              <span>{isCompleted ? 'Adopted in Project' : isInProgress ? 'In Progress' : 'Concluded Study'}</span>
             </span>
           </div>
 
@@ -298,7 +298,7 @@ export default function ResearchDetailModal({
                   <div className="card" style={{ padding: '0.9rem 1rem', background: 'var(--bg-subtle, #f8fafc)', border: '1px solid var(--border-light, #e2e8f0)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--primary)', fontWeight: 700, fontSize: '0.8rem', marginBottom: '0.25rem' }}>
                       <Sparkles size={13} />
-                      <span>Standalone Technology Spike</span>
+                      <span>Standalone Research Study</span>
                     </div>
                     <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
                       General organizational research exploring foundation technologies, shared architectures, or multi-project infrastructure.

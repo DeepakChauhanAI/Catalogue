@@ -17,25 +17,25 @@ export const LIFECYCLE_STATUSES = [
 ];
 
 export const RESEARCH_STATUSES = [
-  { id: 'all', label: 'All Research Statuses', color: 'slate' },
-  { id: 'completed', label: 'Completed & Adopted', color: 'emerald' },
-  { id: 'in-progress', label: 'Active Spike / In-Progress', color: 'amber' },
-  { id: 'evaluated', label: 'Explored / Inactive', color: 'purple' }
+  { id: 'all', label: 'All Studies & Statuses', color: 'slate' },
+  { id: 'completed', label: 'Adopted in Project', color: 'emerald' },
+  { id: 'in-progress', label: 'In Progress', color: 'amber' },
+  { id: 'evaluated', label: 'Concluded Study', color: 'purple' }
 ];
 
 export const RESEARCH_TYPES = [
   { id: 'all', label: 'All Research Types' },
-  { id: 'tech-eval', label: 'Tech Spike & Tool Evaluation' },
+  { id: 'tech-eval', label: 'Technology & Tool Evaluation' },
   { id: 'competitor', label: 'Competitor & Market Analysis' },
   { id: 'feasibility', label: 'Architecture & Feasibility' },
-  { id: 'user-discovery', label: 'User & Stakeholder Discovery' },
+  { id: 'user-discovery', label: 'User Research & Feedback' },
   { id: 'compliance', label: 'Security & Compliance Review' }
 ];
 
 export const DELIVERABLE_CATEGORIES = [
   { id: 'presentation', label: 'Slide Deck / PPT', defaultNotes: 'Presentation & executive briefing' },
   { id: 'folder', label: 'SharePoint / Cloud Drive', defaultNotes: 'Working directory, notes & spreadsheets' },
-  { id: 'code', label: 'PoC Code / Sandbox Repo', defaultNotes: 'Spike implementation sandbox' },
+  { id: 'code', label: 'PoC Code / Sandbox Repo', defaultNotes: 'Prototype implementation sandbox' },
   { id: 'document', label: 'Document / Spec / ADR', defaultNotes: 'Architecture decision & spec' },
   { id: 'design', label: 'Design / Figma Canvas', defaultNotes: 'Interactive canvas & user flow' },
   { id: 'data', label: 'Benchmark / Dataset / Sheet', defaultNotes: 'Evaluation benchmarks & metrics' },
@@ -77,7 +77,7 @@ export function normalizeDeliverables(deliverables) {
       title: 'PoC Prototype Repository',
       url: deliverables.prototypeUrl,
       type: 'code',
-      notes: 'Spike implementation sandbox'
+      notes: 'Prototype implementation sandbox'
     });
   }
   if (deliverables.whitepaperUrl) {
@@ -1025,7 +1025,7 @@ export const CATALOG_DATA = {
 export const RESEARCH_DATA = {
   'spike-derm1m': {
     id: 'spike-derm1m',
-    code: 'SPIKE-DERM-01',
+    code: 'RES-DERM-01',
     title: 'Multimodal Clinical Feasibility: Gemini 1.5 Pro vs Local Vision for Dermatology Triage',
     projectId: 'dermadesk',
     projectName: 'DermaDesk AI',
@@ -1063,19 +1063,19 @@ export const RESEARCH_DATA = {
       'Decision: Implemented as core differential advisory module in DermaDesk v1.0.'
     ],
     deliverables: {
-      pptUrl: 'https://company.sharepoint.com/:p:/r/research/Derm_Model_Spike_Clinical_Deck.pptx',
+      pptUrl: 'https://company.sharepoint.com/:p:/r/research/Derm_Model_Study_Clinical_Deck.pptx',
       sharepointFolder: 'https://company.sharepoint.com/sites/rnd/Derm-Intake-AI-Evaluation',
       prototypeUrl: 'https://github.com/enterprise/derm-model-benchmark-poc',
-      whitepaperUrl: 'https://company.sharepoint.com/:b:/r/research/Derm_Model_Spike_Summary.pdf'
+      whitepaperUrl: 'https://company.sharepoint.com/:b:/r/research/Derm_Model_Study_Summary.pdf'
     },
     relatedProjects: ['dermadesk'],
-    tags: ['Tech Spike', 'Gemini AI', 'Clinical Triage', 'Dermatology']
+    tags: ['Clinical AI', 'Gemini AI', 'Clinical Triage', 'Dermatology']
   },
 
   'spike-pqc-perf': {
     id: 'spike-pqc-perf',
-    code: 'SPIKE-PQC-02',
-    title: 'Latency Spike & AWS KMS Evaluation for Post-Quantum TLS Handshakes',
+    code: 'RES-PQC-02',
+    title: 'Latency Impact & AWS KMS Evaluation for Post-Quantum TLS Handshakes',
     projectId: 'pqc_scanner',
     projectName: 'Panacea PQC Scanner',
     domain: 'infosec',
@@ -1112,18 +1112,18 @@ export const RESEARCH_DATA = {
       'Decision: Standardized as the Mosca 6-factor risk algorithm in Panacea PQC Scanner.'
     ],
     deliverables: {
-      pptUrl: 'https://company.sharepoint.com/:p:/r/research/PQC_Spike_Executive_Review.pptx',
-      sharepointFolder: 'https://company.sharepoint.com/sites/rnd/PQC-KMS-Spike',
+      pptUrl: 'https://company.sharepoint.com/:p:/r/research/PQC_Study_Executive_Review.pptx',
+      sharepointFolder: 'https://company.sharepoint.com/sites/rnd/PQC-KMS-Study',
       prototypeUrl: 'https://github.com/enterprise/pqc-handshake-load-test',
       whitepaperUrl: 'https://company.sharepoint.com/:b:/r/research/PQC_Architecture_Decision_Record.pdf'
     },
     relatedProjects: ['pqc_scanner'],
-    tags: ['Architecture Spike', 'Post-Quantum', 'AWS KMS', 'TLS 1.3']
+    tags: ['Architecture Review', 'Post-Quantum', 'AWS KMS', 'TLS 1.3']
   },
 
   'spike-ambient-nlp': {
     id: 'spike-ambient-nlp',
-    code: 'SPIKE-OPD-03',
+    code: 'RES-OPD-03',
     title: 'Speech-to-Text Benchmark: Whisper vs Azure Speech for Multilingual OPD Clinics',
     projectId: 'opd',
     projectName: 'Panacea OPD AI Assistant',
@@ -1161,18 +1161,18 @@ export const RESEARCH_DATA = {
       'Next Step: Live clinical room pilot scheduled across 3 outpatient chambers in Q4 2026.'
     ],
     deliverables: {
-      pptUrl: 'https://company.sharepoint.com/:p:/r/research/OPD_Voice_Spike_Deck.pptx',
+      pptUrl: 'https://company.sharepoint.com/:p:/r/research/OPD_Voice_Study_Deck.pptx',
       sharepointFolder: 'https://company.sharepoint.com/sites/rnd/OPD-Voice-Benchmarking',
       prototypeUrl: 'https://github.com/enterprise/opd-whisper-streaming-poc',
       whitepaperUrl: 'https://company.sharepoint.com/:b:/r/research/OPD_Voice_Trial_Report.pdf'
     },
     relatedProjects: ['opd'],
-    tags: ['Tech Spike', 'Whisper AI', 'Clinical Audio', 'Hinglish NLP']
+    tags: ['Voice AI', 'Whisper AI', 'Clinical Audio', 'Hinglish NLP']
   },
 
   'spike-agentless-pan': {
     id: 'spike-agentless-pan',
-    code: 'SPIKE-CC-04',
+    code: 'RES-CC-04',
     title: 'Competitor & Architecture Review: Agentless vs Agent-Based Card Data Scanning',
     projectId: 'cc_scanner',
     projectName: 'Central CC Scanner',
@@ -1221,8 +1221,8 @@ export const RESEARCH_DATA = {
 
   'spike-kiosk-ux': {
     id: 'spike-kiosk-ux',
-    code: 'DISCOVERY-KIOSK-05',
-    title: 'User Discovery & Space Constraints for Hospital Check-In Kiosks',
+    code: 'RES-KIOSK-05',
+    title: 'User Research & Space Constraints for Hospital Check-In Kiosks',
     projectId: 'omnicare_kiosk',
     projectName: 'OmniCare Clinical Kiosk',
     domain: 'healthcare',
@@ -1265,7 +1265,7 @@ export const RESEARCH_DATA = {
       whitepaperUrl: 'https://company.sharepoint.com/:b:/r/research/Kiosk_Field_Study_Report.pdf'
     },
     relatedProjects: ['omnicare_kiosk'],
-    tags: ['User Discovery', 'Hardware Spike', 'Ergonomics', 'Healthcare Ops']
+    tags: ['User Research', 'Hardware Feasibility', 'Ergonomics', 'Healthcare Ops']
   }
 };
 
