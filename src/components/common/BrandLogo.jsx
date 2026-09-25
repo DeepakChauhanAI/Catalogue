@@ -9,9 +9,9 @@ const SIZE_MAP = {
   navbar: 28,
   md: 28,
   lg: 48,
-  hero: 120,
-  xl: 120,
-  '2xl': 144
+  hero: 132,
+  xl: 132,
+  '2xl': 158
 };
 
 export default function BrandLogo({

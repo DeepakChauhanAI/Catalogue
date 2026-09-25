@@ -11,9 +11,9 @@ export default function LandingPage({
   return (
     <div className="landing-container animate-fade-in">
       {/* Hero Section */}
-      <section className="landing-hero" style={{ flex: 1, justifyContent: 'center', padding: '4.5rem 1.75rem 3.5rem' }}>
+      <section className="landing-hero" style={{ flex: 1, justifyContent: 'flex-start', padding: '2rem 1.75rem 3rem' }}>
         {/* Brand Emblem */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '2rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.25rem' }}>
           <BrandLogo size="hero" className="landing-hero-brand-logo" />
         </div>
 
